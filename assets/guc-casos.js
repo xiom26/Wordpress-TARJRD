@@ -22,6 +22,11 @@
     let $startForm  = $('#guc-form-inicio');
     const $startSave   = $('#guc-save-start');
     const $startCancel = $('#guc-cancel-start');
+    const $pdfField    = $('#guc-action-pdf');
+    const $pdfName     = $('#guc-action-pdf-name');
+    const $pdfLink     = $('#guc-action-pdf-open');
+    const $pdfUploadBtn= $('#guc-action-pdf-upload');
+    const $pdfDeleteBtn= $('#guc-action-pdf-delete');
 
     if ($startModal.length && $startModal.parent()[0] !== document.body) {
       $startModal = $startModal.detach().appendTo('body');
@@ -33,6 +38,128 @@
       edit: 'Editar acción',
       default: 'Registrar acción'
     };
+
+    function fileNameFromUrl(url){
+      if(!url) return '';
+      try {
+        const clean = url.split('/').pop().split('#')[0].split('?')[0];
+        return decodeURIComponent(clean);
+      } catch(e){
+        return url;
+      }
+    }
+
+    function setPdfInfo(url){
+      if(!$pdfField.length) return;
+      const has = !!url;
+      const safeUrl = url || '';
+      $pdfField.attr('data-has-pdf', has ? '1' : '0');
+      $pdfField.attr('data-current-pdf', safeUrl);
+      if ($pdfName.length) {
+        $pdfName.text(has ? fileNameFromUrl(safeUrl) : 'Sin archivo adjunto');
+      }
+      if ($pdfLink.length) {
+        if (has) {
+          $pdfLink.attr('href', safeUrl).removeAttr('hidden');
+        } else {
+          $pdfLink.attr('href', '#').attr('hidden', true);
+        }
+      }
+      if ($pdfUploadBtn.length) {
+        $pdfUploadBtn.attr('data-has-pdf', has ? '1' : '0');
+        $pdfUploadBtn.toggleClass('has-pdf', has);
+      }
+      if ($pdfDeleteBtn.length) {
+        $pdfDeleteBtn.prop('disabled', !has);
+      }
+    }
+
+    function showPdfField(show){
+      if(!$pdfField.length) return;
+      $pdfField.toggleClass('guc-hidden', !show);
+      $pdfField.attr('aria-hidden', show ? 'false' : 'true');
+      if (!show) {
+        setPdfInfo('');
+        $startModal.removeAttr('data-edit-section data-edit-case');
+      }
+    }
+
+    function setStartModalMode(mode){
+      const key = (mode === 'edit') ? 'edit' : 'default';
+      $startModal.attr('data-mode', key);
+      $startModal.find('.guc-modal-header h3').text(START_TITLES[key]);
+      showPdfField(mode === 'edit');
+    }
+
+    function resetStartModal(){
+      startDirty = false;
+      $startModal.removeAttr('data-target-section data-edit-row data-mode data-edit-case data-edit-section');
+      if ($startForm[0]) {
+        $startForm[0].reset();
+      }
+      setPdfInfo('');
+      showPdfField(false);
+    }
+
+    $startForm.on('input change', 'input, textarea', function(){ startDirty = true; });
+
+    if ($pdfUploadBtn.length) {
+      $pdfUploadBtn.on('click', function(){
+        if ($startModal.attr('data-mode') !== 'edit') return;
+        const rowId = $startModal.attr('data-edit-row');
+        const section = $startModal.attr('data-edit-section');
+        const caseId = $startModal.attr('data-edit-case');
+        if (!rowId || !section) return;
+        const $btn = $(this);
+        const $input = $('<input type="file" accept="application/pdf" style="display:none">');
+        $('body').append($input);
+        $input.on('change', function(){
+          if (!this.files || !this.files[0]) { $input.remove(); return; }
+          $btn.prop('disabled', true).attr('data-loading','1');
+          doPdfUpload(section, rowId, this.files[0]).done(function(res){
+            if (res && res.success) {
+              const nextUrl = res.data?.pdf_url || '';
+              setPdfInfo(nextUrl);
+              if (caseId) refreshSectionFor(caseId, section);
+            } else {
+              alert(res?.data?.message || 'No se pudo subir el PDF');
+            }
+          }).fail(function(){
+            alert('Error de conexión al subir PDF');
+          }).always(function(){
+            $btn.prop('disabled', false).removeAttr('data-loading');
+            $input.remove();
+          });
+        }).trigger('click');
+      });
+    }
+
+    if ($pdfDeleteBtn.length) {
+      $pdfDeleteBtn.on('click', function(){
+        const $btn = $(this);
+        if ($btn.prop('disabled')) return;
+        const rowId = $startModal.attr('data-edit-row');
+        const section = $startModal.attr('data-edit-section');
+        const caseId = $startModal.attr('data-edit-case');
+        if (!rowId || !section) return;
+        if (!confirm('¿Eliminar el PDF de esta acción?')) return;
+        $btn.attr('data-loading','1');
+        doPdfClear(section, rowId).done(function(res){
+          if (res && res.success){
+            setPdfInfo('');
+            if (caseId) refreshSectionFor(caseId, section);
+          } else {
+            alert(res?.data?.message || 'No se pudo eliminar el PDF');
+            $btn.prop('disabled', false);
+          }
+        }).fail(function(){
+          alert('Error de conexión al eliminar PDF');
+          $btn.prop('disabled', false);
+        }).always(function(){
+          $btn.removeAttr('data-loading');
+        });
+      });
+    }
 
     function setStartModalMode(mode){
       const key = (mode === 'edit') ? 'edit' : 'default';
@@ -56,6 +183,13 @@
       resetStartModal();
     }
 
+    function closeStart(force){
+      if (force && typeof force.preventDefault === 'function') {
+        force.preventDefault();
+        force = false;
+      }
+      const shouldForce = force === true;
+      if (!shouldForce && startDirty && $startModal.attr('data-mode') !== 'view'){
     function closeStart(){
       if (startDirty && $startModal.attr('data-mode') !== 'view'){
         if(!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
@@ -215,6 +349,28 @@
       return section;
     }
 
+    function refreshSectionFor(caseId, sectionKey){
+      if(!caseId) return;
+      const cid = String(caseId);
+      const $sub = $('tr.guc-subrow[data-parent="'+cid+'"]').first();
+      if(!$sub.length) return;
+      let $wrap;
+      if (sectionKey === 'pre') {
+        $wrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
+      } else if (sectionKey === 'arb') {
+        $wrap = $sub.find('.guc-subtable-wrap[data-section="arb"]');
+      } else {
+        $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
+        if ($wrap.length) {
+          $wrap.attr('data-bucket', sectionKey);
+          $sub.find('[data-secretaria-title]').text(sectionKey === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
+        }
+      }
+      if ($wrap && $wrap.length) {
+        renderSection($wrap);
+      }
+    }
+
     function openCaseRow($row, caseId, state){
       if(!$row || !$row.length) return null;
       const cid = String(caseId);
@@ -242,6 +398,25 @@
 
     function restoreState(state){
       const stored = state || readStoredState() || { openCases:[], panels:{}, secretariaBucket:{} };
+      const requested = new Set((stored.openCases || []).map(String));
+      const opened = new Set();
+
+      requested.forEach(function(cid){
+        const $row = $tbody.find('tr[data-id="'+cid+'"]').first();
+        if(!$row.length) return;
+        if (openCaseRow($row, cid, stored)) {
+          opened.add(cid);
+        }
+      });
+
+      $tbody.find('tr[data-id][data-has-actions="1"]').each(function(){
+        const cid = String($(this).data('id'));
+        if(opened.has(cid)) return;
+        if (openCaseRow($(this), cid, stored)) {
+          opened.add(cid);
+        }
+      });
+
       const applied = new Set();
 
       (stored.openCases || []).forEach(function(caseId){
@@ -537,6 +712,12 @@
         if(!(res && res.success)){ alert(res?.data?.message || 'No se pudo obtener la fila'); return; }
         const d = res.data || {};
         resetStartModal();
+        $startModal.attr('data-target-section', section)
+                   .attr('data-edit-row', String(rowId))
+                   .attr('data-edit-section', section);
+        if (d.case_id) {
+          $startModal.attr('data-edit-case', String(d.case_id));
+        }
         $startModal.attr('data-target-section', section).attr('data-edit-row', String(rowId));
         $startForm.find('[name=case_id]').val(d.case_id || '');
         $startForm.find('[name=situacion]').val(d.situacion || '');
@@ -546,6 +727,9 @@
           const isoLocal = d.fecha.replace(' ', 'T').slice(0,16);
           $startForm.find('[name=fecha]').val(isoLocal);
         }
+        const pdfUrl = d.pdf_url || d.pdf || d.file_url || d.attachment_url || '';
+        showPdfField(true);
+        setPdfInfo(pdfUrl);
         openStart('edit');
       }, 'json').fail(function(){ alert('Error de conexión'); });
     });
@@ -614,10 +798,12 @@
             $startSave.prop('disabled', false);
             if (!(res && res.success)) { alert(res?.data?.message || (editingRow?'No se pudo actualizar la acción':'No se pudo registrar la acción')); return; }
 
+            startDirty = false;
+            closeStart(true); // cerrar modal y limpiar destino
             closeStart(); // cerrar modal y limpiar destino
 
             // refrescar SOLO la subtabla correspondiente
-            const $sub = $('tr.guc-subrow[data-parent="'+data.case_id+'"]');
+            const $sub = $('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
             let $wrap;
             if (finalBucket === 'pre') {
               $wrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
@@ -626,10 +812,14 @@
             } else {
               // secretaría
               $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
-              $wrap.attr('data-bucket', finalBucket);
-              $sub.find('[data-secretaria-title]').text(finalBucket === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
+              if ($wrap.length) {
+                $wrap.attr('data-bucket', finalBucket);
+                $sub.find('[data-secretaria-title]').text(finalBucket === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
+              }
             }
-            renderSection($wrap);
+            if ($wrap && $wrap.length) {
+              renderSection($wrap);
+            }
           }, 'json').fail(function(){
             $startSave.prop('disabled', false);
             alert('Error de conexión al registrar la acción');
@@ -639,13 +829,14 @@
         return; // IMPORTANTE: no ejecutar la rama de iniciar caso
       }
 
-      // ---------- Rama B: INICIAR CASO ---------- }
+      // ---------- Rama B: INICIAR CASO ----------
 
       $.post(GUC_CASOS.ajax, { action:'guc_create_case_event', nonce:GUC_CASOS.nonce, data }, function(res){
         $startSave.prop('disabled', false);
         if (!(res && res.success)) { alert(res?.data?.message || 'No se pudo registrar el evento'); return; }
 
-        closeStart();
+        startDirty = false;
+        closeStart(true);
 
         // asegurar subfila
         const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $('.guc-start[data-id="'+ data.case_id +'"]').first().closest('tr');
@@ -675,12 +866,44 @@
       });
     });
 
+    function doPdfUpload(section, rowId, file){
+      const fd = new FormData();
+      fd.append('action','guc_upload_pdf');
+      fd.append('nonce', GUC_CASOS.nonce);
+      fd.append('section', section);
+      fd.append('row_id', rowId);
+      fd.append('file', file);
+      return $.ajax({
+        url: GUC_CASOS.ajax,
+        type: 'POST',
+        data: fd,
+        contentType: false,
+        processData: false,
+        dataType: 'json'
+      });
+    }
+
+    function doPdfClear(section, rowId){
+      return $.post(GUC_CASOS.ajax, {
+        action: 'guc_clear_pdf',
+        nonce: GUC_CASOS.nonce,
+        section,
+        row_id: rowId
+      }, null, 'json');
+    }
+
     /* ==========================================================
      *  Subida de PDF (delegado por fila)
      * ========================================================== */
     $(document).on('click', '.guc-upload', function(){
       const $btn = $(this);
       const section = resolveSectionKey($btn); // pre | sec_arbitral | sec_general | arb
+      const $row = $btn.closest('tr');
+      const rowId   = $row.data('row-id');
+      const caseId  = $row.data('case-id');
+      if (!rowId || !section) return;
+
+      const $wrap = $btn.closest('.guc-subtable-wrap');
       const rowId   = $btn.closest('tr').data('row-id');
       if (!rowId || !section) return;
 
@@ -691,6 +914,24 @@
       $('body').append($input);
       $input.on('change', function(){
         if (!this.files || !this.files[0]) { $input.remove(); return; }
+        $btn.prop('disabled', true).attr('data-loading','1');
+        doPdfUpload(section, rowId, this.files[0]).done(function(res){
+          if (res && res.success) {
+            if ($wrap.length) {
+              renderSection($wrap);
+            } else if (caseId) {
+              refreshSectionFor(caseId, section);
+            }
+          } else {
+            alert(res?.data?.message || 'No se pudo subir el PDF');
+          }
+        }).fail(function(){
+          alert('Error de conexión al subir PDF');
+        }).always(function(){
+          $btn.removeAttr('data-loading').prop('disabled', false);
+          $input.remove();
+        });
+      }).trigger('click');
         const fd = new FormData();
         fd.append('action','guc_upload_pdf');
         fd.append('nonce', GUC_CASOS.nonce);
