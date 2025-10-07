@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.5)
+ * Plugin Name: GUC Casos (v1.6.6)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.5
+ * Version:     1.6.6
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.5';
+  const VERSION = '1.6.6';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -100,15 +100,24 @@ final class GUC_Casos_Compact {
               <span class="guc-ico-mini guc-ico-search" aria-hidden="true"></span>
             </button>
           </form>
-          <div class="guc-filter" data-filter-wrapper>
+          <div class="guc-filter" data-filter-wrapper data-filter-active="0">
             <button type="button" id="guc-filter-toggle" class="guc-filter-toggle" aria-haspopup="true" aria-expanded="false">
               <span class="guc-ico-mini guc-ico-filter" aria-hidden="true"></span>
               <span class="guc-filter-text">Todos</span>
             </button>
             <div id="guc-filter-menu" class="guc-filter-menu" role="menu" hidden>
-              <button type="button" data-filter="" role="menuitem">Todos</button>
-              <button type="button" data-filter="TAR" role="menuitem">TAR</button>
-              <button type="button" data-filter="JPRD" role="menuitem">JPRD</button>
+              <button type="button" data-filter="" role="menuitemradio" aria-checked="true">
+                <span class="guc-filter-check" aria-hidden="true"></span>
+                <span class="guc-filter-label">Todos</span>
+              </button>
+              <button type="button" data-filter="TAR" role="menuitemradio" aria-checked="false">
+                <span class="guc-filter-check" aria-hidden="true"></span>
+                <span class="guc-filter-label">TAR</span>
+              </button>
+              <button type="button" data-filter="JPRD" role="menuitemradio" aria-checked="false">
+                <span class="guc-filter-check" aria-hidden="true"></span>
+                <span class="guc-filter-label">JPRD</span>
+              </button>
             </div>
           </div>
           <button id="guc-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>

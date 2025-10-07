@@ -17,6 +17,7 @@
     const $searchInput  = $root.find('#guc-search-expediente');
     const $filterToggle = $root.find('#guc-filter-toggle');
     const $filterMenu   = $root.find('#guc-filter-menu');
+    const $filterWrapper= $root.find('[data-filter-wrapper]');
 
     let currentSearch = '';
     let currentFilter = '';
@@ -33,15 +34,19 @@
         var label = 'Todos';
         if (currentFilter === 'TAR') label = 'TAR';
         else if (currentFilter === 'JPRD') label = 'JPRD';
-        $filterToggle.attr('data-active', currentFilter ? '1' : '0');
         $filterToggle.attr('data-filter-value', currentFilter || '');
         var $label = $filterToggle.find('.guc-filter-text');
         if ($label.length) { $label.text(label); }
       }
+      if ($filterWrapper.length) {
+        $filterWrapper.attr('data-filter-active', currentFilter ? '1' : '0');
+      }
       if ($filterMenu.length) {
         $filterMenu.find('button[data-filter]').each(function(){
           var val = $(this).attr('data-filter') || '';
-          $(this).toggleClass('is-active', val === currentFilter);
+          var isActive = (val === currentFilter);
+          $(this).toggleClass('is-active', isActive);
+          $(this).attr('aria-checked', isActive ? 'true' : 'false');
         });
       }
     }
@@ -49,7 +54,14 @@
     function handleFilterDocClick(e){
       if (!$filterMenu.length) return;
       var $target = $(e.target);
-      if ($target.closest('#guc-casos .guc-filter').length) return;
+      if ($target.closest('#guc-casos [data-filter-wrapper]').length) return;
+      closeFilterMenu();
+    }
+
+    function handleFilterFocus(e){
+      if (!filterMenuOpen) return;
+      var $target = $(e.target);
+      if ($target.closest('#guc-casos [data-filter-wrapper]').length) return;
       closeFilterMenu();
     }
 
@@ -65,20 +77,38 @@
       if (filterMenuOpen) return;
       filterMenuOpen = true;
       $filterToggle.attr('aria-expanded','true');
+      if ($filterWrapper.length) $filterWrapper.addClass('is-open');
       $filterMenu.removeAttr('hidden');
       setTimeout(function(){
-        $(document).on('click.gucFilter', handleFilterDocClick);
-        $(document).on('keydown.gucFilter', handleFilterKeydown);
+        $(document)
+          .on('click.gucFilter', handleFilterDocClick)
+          .on('focusin.gucFilter', handleFilterFocus)
+          .on('keydown.gucFilter', handleFilterKeydown);
       }, 0);
+      setTimeout(function(){
+        if (!$filterMenu.length) return;
+        var $focusTarget = $filterMenu.find('button.is-active').first();
+        if (!$focusTarget.length) {
+          $focusTarget = $filterMenu.find('button').first();
+        }
+        if ($focusTarget.length) {
+          $focusTarget.trigger('focus');
+        }
+      }, 30);
     }
 
-    function closeFilterMenu(){
+    function closeFilterMenu(force){
       if (!$filterMenu.length || !$filterToggle.length) return;
-      if (!filterMenuOpen) return;
+      var wasOpen = filterMenuOpen;
       filterMenuOpen = false;
       $filterToggle.attr('aria-expanded','false');
+      if ($filterWrapper.length) $filterWrapper.removeClass('is-open');
       $filterMenu.attr('hidden','hidden');
       $(document).off('.gucFilter');
+      if (force === true || !wasOpen) return;
+      if ($filterToggle.length) {
+        $filterToggle.trigger('blur');
+      }
     }
 
     function applySearch(raw){
@@ -466,10 +496,16 @@
     const storedPreferences = readStoredState();
     if (storedPreferences && typeof storedPreferences === 'object') {
       if (storedPreferences.search) currentSearch = String(storedPreferences.search);
-      if (storedPreferences.filter) currentFilter = String(storedPreferences.filter);
+      if (storedPreferences.filter) {
+        var storedFilter = String(storedPreferences.filter);
+        if (storedFilter === 'TAR' || storedFilter === 'JPRD') {
+          currentFilter = storedFilter;
+        }
+      }
     }
     updateSearchUI();
     updateFilterUI();
+    closeFilterMenu(true);
 
     function captureState(){
       const state = { openCases: [], panels:{}, secretariaBucket:{}, search: currentSearch || '', filter: currentFilter || '' };
@@ -579,7 +615,8 @@
     function restoreState(state){
       const stored = state || readStoredState() || { openCases:[], panels:{}, secretariaBucket:{}, search:'', filter:'' };
       currentSearch = stored.search ? String(stored.search) : '';
-      currentFilter = stored.filter ? String(stored.filter) : '';
+      const storedFilter = stored.filter ? String(stored.filter) : '';
+      currentFilter = (storedFilter === 'TAR' || storedFilter === 'JPRD') ? storedFilter : '';
       updateSearchUI();
       updateFilterUI();
       const requested = new Set((stored.openCases || []).map(String));
