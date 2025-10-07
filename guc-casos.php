@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.6)
+ * Plugin Name: GUC Casos (v1.6.7)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.6
+ * Version:     1.6.7
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.6';
+  const VERSION = '1.6.7';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -139,7 +139,7 @@ final class GUC_Casos_Compact {
     </div>
 
     <!-- Modal crear/editar -->
-    <div id="guc-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-modal" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
           <h3 id="guc-modal-title">Crear nuevo caso</h3>
@@ -204,7 +204,7 @@ final class GUC_Casos_Compact {
     </div>
 
     <!-- Modal iniciar/agregar acción -->
-    <div id="guc-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
           <h3>Registrar acción</h3>
@@ -251,7 +251,7 @@ final class GUC_Casos_Compact {
     </div>
 
     <!-- Modal estado del caso -->
-    <div id="guc-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
           <h3>Estado del caso</h3>

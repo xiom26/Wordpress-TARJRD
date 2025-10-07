@@ -56,77 +56,77 @@
 #guc-casos .guc-pill{background:#4b3a31;color:#fff;border:0;border-radius:10px;padding:6px 10px;font-weight:700;}
 
 /* ===== modales (igual a lo tuyo) ===== */
-#guc-modal, #guc-modal-start, #guc-modal-status{
+#guc-casos-modal, #guc-casos-modal-start, #guc-casos-modal-status{
   position:fixed; inset:0; display:none; z-index:100000;
   background:rgba(0,0,0,.28); -webkit-backdrop-filter:blur(1px); backdrop-filter:blur(1px);
 }
-#guc-modal.show, #guc-modal-start.show, #guc-modal-status.show{display:flex;align-items:center;justify-content:center;}
-#guc-modal .guc-modal-dialog, #guc-modal-start .guc-modal-dialog, #guc-modal-status .guc-modal-dialog{
+#guc-casos-modal.show, #guc-casos-modal-start.show, #guc-casos-modal-status.show{display:flex;align-items:center;justify-content:center;}
+#guc-casos-modal .guc-modal-dialog, #guc-casos-modal-start .guc-modal-dialog, #guc-casos-modal-status .guc-modal-dialog{
   position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
   width:min(760px,calc(100% - 48px)); max-height:85vh; overflow:auto;
   background:#fff; border-radius:20px; border:1px solid #eadfce; box-shadow:0 20px 40px rgba(0,0,0,.20); z-index:100001;
 }
-#guc-modal .guc-modal-header,
-#guc-modal-start .guc-modal-header,
-#guc-modal-status .guc-modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f0e7db;background:#3e2e25;color:#fff;}
-#guc-modal .guc-modal-header h3,
-#guc-modal-start .guc-modal-header h3,
-#guc-modal-status .guc-modal-header h3{margin:0;color:#fff;}
-#guc-modal .guc-modal-close,
-#guc-modal-start .guc-modal-close,
-#guc-modal-status .guc-modal-close{background:transparent;border:0;font-size:20px;cursor:pointer;color:#ffdfdf;}
-#guc-modal .guc-modal-body,
-#guc-modal-start .guc-modal-body,
-#guc-modal-status .guc-modal-body{padding:18px 20px;background:#fff;}
-#guc-modal .guc-modal-footer,
-#guc-modal-start .guc-modal-footer,
-#guc-modal-status .guc-modal-footer{padding:14px 20px;border-top:1px solid #f0e7db;display:flex;justify-content:flex-end;gap:10px;background:#fff;}
+#guc-casos-modal .guc-modal-header,
+#guc-casos-modal-start .guc-modal-header,
+#guc-casos-modal-status .guc-modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f0e7db;background:#3e2e25;color:#fff;}
+#guc-casos-modal .guc-modal-header h3,
+#guc-casos-modal-start .guc-modal-header h3,
+#guc-casos-modal-status .guc-modal-header h3{margin:0;color:#fff;}
+#guc-casos-modal .guc-modal-close,
+#guc-casos-modal-start .guc-modal-close,
+#guc-casos-modal-status .guc-modal-close{background:transparent;border:0;font-size:20px;cursor:pointer;color:#ffdfdf;}
+#guc-casos-modal .guc-modal-body,
+#guc-casos-modal-start .guc-modal-body,
+#guc-casos-modal-status .guc-modal-body{padding:18px 20px;background:#fff;}
+#guc-casos-modal .guc-modal-footer,
+#guc-casos-modal-start .guc-modal-footer,
+#guc-casos-modal-status .guc-modal-footer{padding:14px 20px;border-top:1px solid #f0e7db;display:flex;justify-content:flex-end;gap:10px;background:#fff;}
 
 /* ===== formulario ===== */
 #guc-casos .guc-field,
-#guc-modal .guc-field,
-#guc-modal-start .guc-field,
-#guc-modal-status .guc-field{margin-bottom:14px;}
+#guc-casos-modal .guc-field,
+#guc-casos-modal-start .guc-field,
+#guc-casos-modal-status .guc-field{margin-bottom:14px;}
 #guc-casos .guc-field label,
-#guc-modal .guc-field label,
-#guc-modal-start .guc-field label,
-#guc-modal-status .guc-field label{display:block;margin-bottom:6px;color:#2b241d;font-weight:700;}
+#guc-casos-modal .guc-field label,
+#guc-casos-modal-start .guc-field label,
+#guc-casos-modal-status .guc-field label{display:block;margin-bottom:6px;color:#2b241d;font-weight:700;}
 #guc-casos .guc-field input[type=text],
 #guc-casos .guc-field textarea,
 #guc-casos .guc-field select,
-#guc-modal .guc-field input[type=text],
-#guc-modal .guc-field textarea,
-#guc-modal .guc-field select,
-#guc-modal-start .guc-field input[type=text],
-#guc-modal-start .guc-field textarea,
-#guc-modal-start .guc-field select,
-#guc-modal-status .guc-field input[type=text],
-#guc-modal-status .guc-field textarea,
-#guc-modal-status .guc-field select{width:100%;padding:10px 12px;border:1px solid #e1d7c8;border-radius:12px;outline:0;background:#fff;}
+#guc-casos-modal .guc-field input[type=text],
+#guc-casos-modal .guc-field textarea,
+#guc-casos-modal .guc-field select,
+#guc-casos-modal-start .guc-field input[type=text],
+#guc-casos-modal-start .guc-field textarea,
+#guc-casos-modal-start .guc-field select,
+#guc-casos-modal-status .guc-field input[type=text],
+#guc-casos-modal-status .guc-field textarea,
+#guc-casos-modal-status .guc-field select{width:100%;padding:10px 12px;border:1px solid #e1d7c8;border-radius:12px;outline:0;background:#fff;}
 #guc-casos .guc-field textarea,
-#guc-modal .guc-field textarea,
-#guc-modal-start .guc-field textarea,
-#guc-modal-status .guc-field textarea{resize:vertical;min-height:110px;}
+#guc-casos-modal .guc-field textarea,
+#guc-casos-modal-start .guc-field textarea,
+#guc-casos-modal-status .guc-field textarea{resize:vertical;min-height:110px;}
 #guc-casos .guc-help,
-#guc-modal .guc-help,
-#guc-modal-start .guc-help,
-#guc-modal-status .guc-help{display:block;margin-top:6px;color:#8a7a66;}
+#guc-casos-modal .guc-help,
+#guc-casos-modal-start .guc-help,
+#guc-casos-modal-status .guc-help{display:block;margin-top:6px;color:#8a7a66;}
 #guc-casos .guc-row,
-#guc-modal .guc-row,
-#guc-modal-start .guc-row,
-#guc-modal-status .guc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#guc-casos-modal .guc-row,
+#guc-casos-modal-start .guc-row,
+#guc-casos-modal-status .guc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 #guc-casos .guc-col,
-#guc-modal .guc-col,
-#guc-modal-start .guc-col,
-#guc-modal-status .guc-col{min-width:0;}
-@media (max-width:640px){#guc-casos .guc-row,#guc-modal .guc-row,#guc-modal-start .guc-row,#guc-modal-status .guc-row{grid-template-columns:1fr;}}
+#guc-casos-modal .guc-col,
+#guc-casos-modal-start .guc-col,
+#guc-casos-modal-status .guc-col{min-width:0;}
+@media (max-width:640px){#guc-casos .guc-row,#guc-casos-modal .guc-row,#guc-casos-modal-start .guc-row,#guc-casos-modal-status .guc-row{grid-template-columns:1fr;}}
 
 /* sólo lectura */
 #guc-casos .guc-readonly,
-#guc-modal .guc-readonly,
-#guc-modal-start .guc-readonly,
-#guc-modal-status .guc-readonly{background:#fbf8f3;color:#6b5e50;}
-body.guc-no-scroll{overflow:hidden;}
+#guc-casos-modal .guc-readonly,
+#guc-casos-modal-start .guc-readonly,
+#guc-casos-modal-status .guc-readonly{background:#fbf8f3;color:#6b5e50;}
+body.guc-casos-no-scroll{overflow:hidden;}
 
 /* ===== subfilas y subtables ===== */
 #guc-casos .guc-subrow .guc-subrow-cell{ padding:.75rem 1rem; background:#fff; border-top:1px solid #e5e2dd; }
@@ -162,58 +162,58 @@ body.guc-no-scroll{overflow:hidden;}
 #guc-casos .guc-subtable-footer{margin-top:6px}
 /* icon action buttons */
 #guc-casos .guc-hidden,
-#guc-modal .guc-hidden,
-#guc-modal-start .guc-hidden,
-#guc-modal-status .guc-hidden{display:none!important}
+#guc-casos-modal .guc-hidden,
+#guc-casos-modal-start .guc-hidden,
+#guc-casos-modal-status .guc-hidden{display:none!important}
 
 #guc-casos .guc-ico,
-#guc-modal .guc-ico,
-#guc-modal-start .guc-ico,
-#guc-modal-status .guc-ico{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border:1px solid #d9c8b3;border-radius:16px;background:#fff;cursor:pointer;margin-right:8px;color:#6b5e50;transition:background .15s ease,transform .12s ease}
+#guc-casos-modal .guc-ico,
+#guc-casos-modal-start .guc-ico,
+#guc-casos-modal-status .guc-ico{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border:1px solid #d9c8b3;border-radius:16px;background:#fff;cursor:pointer;margin-right:8px;color:#6b5e50;transition:background .15s ease,transform .12s ease}
 #guc-casos .guc-ico::before,
-#guc-modal .guc-ico::before,
-#guc-modal-start .guc-ico::before,
-#guc-modal-status .guc-ico::before{content:"";display:block;width:32px;height:32px;background-color:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain}
+#guc-casos-modal .guc-ico::before,
+#guc-casos-modal-start .guc-ico::before,
+#guc-casos-modal-status .guc-ico::before{content:"";display:block;width:32px;height:32px;background-color:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain}
 #guc-casos .guc-ico:hover,
-#guc-modal .guc-ico:hover,
-#guc-modal-start .guc-ico:hover,
-#guc-modal-status .guc-ico:hover{background:#f4ede4;transform:translateY(-1px)}
+#guc-casos-modal .guc-ico:hover,
+#guc-casos-modal-start .guc-ico:hover,
+#guc-casos-modal-status .guc-ico:hover{background:#f4ede4;transform:translateY(-1px)}
 #guc-casos .guc-ico:active,
-#guc-modal .guc-ico:active,
-#guc-modal-start .guc-ico:active,
-#guc-modal-status .guc-ico:active{transform:scale(.95)}
+#guc-casos-modal .guc-ico:active,
+#guc-casos-modal-start .guc-ico:active,
+#guc-casos-modal-status .guc-ico:active{transform:scale(.95)}
 #guc-casos .guc-ico[data-loading="1"],
-#guc-modal .guc-ico[data-loading="1"],
-#guc-modal-start .guc-ico[data-loading="1"],
-#guc-modal-status .guc-ico[data-loading="1"]{opacity:.6;cursor:progress}
+#guc-casos-modal .guc-ico[data-loading="1"],
+#guc-casos-modal-start .guc-ico[data-loading="1"],
+#guc-casos-modal-status .guc-ico[data-loading="1"]{opacity:.6;cursor:progress}
 #guc-casos .guc-ico:disabled,
-#guc-modal .guc-ico:disabled,
-#guc-modal-start .guc-ico:disabled,
-#guc-modal-status .guc-ico:disabled{opacity:.45;cursor:not-allowed}
+#guc-casos-modal .guc-ico:disabled,
+#guc-casos-modal-start .guc-ico:disabled,
+#guc-casos-modal-status .guc-ico:disabled{opacity:.45;cursor:not-allowed}
 #guc-casos .guc-ico.has-pdf,#guc-casos .guc-ico[data-has-pdf="1"],
-#guc-modal .guc-ico.has-pdf,#guc-modal .guc-ico[data-has-pdf="1"],
-#guc-modal-start .guc-ico.has-pdf,#guc-modal-start .guc-ico[data-has-pdf="1"],
-#guc-modal-status .guc-ico.has-pdf,#guc-modal-status .guc-ico[data-has-pdf="1"]{background:#f8f1e8;border-color:#cdb997;color:#4a3a2a}
+#guc-casos-modal .guc-ico.has-pdf,#guc-casos-modal .guc-ico[data-has-pdf="1"],
+#guc-casos-modal-start .guc-ico.has-pdf,#guc-casos-modal-start .guc-ico[data-has-pdf="1"],
+#guc-casos-modal-status .guc-ico.has-pdf,#guc-casos-modal-status .guc-ico[data-has-pdf="1"]{background:#f8f1e8;border-color:#cdb997;color:#4a3a2a}
 #guc-casos .guc-ico.guc-ico-upload::before,
-#guc-modal .guc-ico.guc-ico-upload::before,
-#guc-modal-start .guc-ico.guc-ico-upload::before,
-#guc-modal-status .guc-ico.guc-ico-upload::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M12 3l4.5 4.5h-2.5V13h-4V7.5H7.5L12 3zm-7 14h14v2H5v-2z'/></svg>")}
+#guc-casos-modal .guc-ico.guc-ico-upload::before,
+#guc-casos-modal-start .guc-ico.guc-ico-upload::before,
+#guc-casos-modal-status .guc-ico.guc-ico-upload::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M12 3l4.5 4.5h-2.5V13h-4V7.5H7.5L12 3zm-7 14h14v2H5v-2z'/></svg>")}
 #guc-casos .guc-ico.guc-ico-edit::before,
-#guc-modal .guc-ico.guc-ico-edit::before,
-#guc-modal-start .guc-ico.guc-ico-edit::before,
-#guc-modal-status .guc-ico.guc-ico-edit::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 1.83l10.9-10.9 1.79 1.79-10.9 10.9H5.92zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.13 1.13 3.75 3.75 1.13-1.13z'/></svg>")}
+#guc-casos-modal .guc-ico.guc-ico-edit::before,
+#guc-casos-modal-start .guc-ico.guc-ico-edit::before,
+#guc-casos-modal-status .guc-ico.guc-ico-edit::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 1.83l10.9-10.9 1.79 1.79-10.9 10.9H5.92zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.13 1.13 3.75 3.75 1.13-1.13z'/></svg>")}
 #guc-casos .guc-ico.guc-ico-del::before,
-#guc-modal .guc-ico.guc-ico-del::before,
-#guc-modal-start .guc-ico.guc-ico-del::before,
-#guc-modal-status .guc-ico.guc-ico-del::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7zm3-4h6l1 1h4v2H4V4h4l1-1zm1 6v10h2V9h-2zm4 0v10h2V9h-2z'/></svg>")}
+#guc-casos-modal .guc-ico.guc-ico-del::before,
+#guc-casos-modal-start .guc-ico.guc-ico-del::before,
+#guc-casos-modal-status .guc-ico.guc-ico-del::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7zm3-4h6l1 1h4v2H4V4h4l1-1zm1 6v10h2V9h-2zm4 0v10h2V9h-2z'/></svg>")}
 #guc-casos .guc-ico.guc-ico-view::before,
-#guc-modal .guc-ico.guc-ico-view::before,
-#guc-modal-start .guc-ico.guc-ico-view::before,
-#guc-modal-status .guc-ico.guc-ico-view::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M12 5c-5.05 0-9.27 3.11-11 7 1.73 3.89 5.95 7 11 7s9.27-3.11 11-7c-1.73-3.89-5.95-7-11-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'/></svg>")}
+#guc-casos-modal .guc-ico.guc-ico-view::before,
+#guc-casos-modal-start .guc-ico.guc-ico-view::before,
+#guc-casos-modal-status .guc-ico.guc-ico-view::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M12 5c-5.05 0-9.27 3.11-11 7 1.73 3.89 5.95 7 11 7s9.27-3.11 11-7c-1.73-3.89-5.95-7-11-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'/></svg>")}
 #guc-casos .guc-ico.guc-ico-gear::before,
-#guc-modal .guc-ico.guc-ico-gear::before,
-#guc-modal-start .guc-ico.guc-ico-gear::before,
-#guc-modal-status .guc-ico.guc-ico-gear::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.02 7.02 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 14.39 2h-3.78a.5.5 0 0 0-.5.42l-.36 2.54c-.6.23-1.15.54-1.66.9l-2.39-.96a.5.5 0 0 0-.6.22L2.18 8.44a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.48.37 1.03.67 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.78a.5.5 0 0 0 .5-.42l.36-2.54c.6-.23 1.15-.54 1.66-.9l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z'/></svg>")}
+#guc-casos-modal .guc-ico.guc-ico-gear::before,
+#guc-casos-modal-start .guc-ico.guc-ico-gear::before,
+#guc-casos-modal-status .guc-ico.guc-ico-gear::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.02 7.02 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 14.39 2h-3.78a.5.5 0 0 0-.5.42l-.36 2.54c-.6.23-1.15.54-1.66.9l-2.39-.96a.5.5 0 0 0-.6.22L2.18 8.44a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.48.37 1.03.67 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.78a.5.5 0 0 0 .5-.42l.36-2.54c.6-.23 1.15-.54 1.66-.9l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z'/></svg>")}
 
 #guc-action-pdf{margin-top:6px}
 #guc-action-pdf .guc-pdf-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid #eadfce;border-radius:14px;background:#fbf6ef}
@@ -225,8 +225,8 @@ body.guc-no-scroll{overflow:hidden;}
 #guc-action-pdf .guc-pdf-buttons{display:flex;gap:8px}
 #guc-action-pdf .guc-ico{margin-right:0}
 
-#guc-modal-status .guc-modal-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:640px){#guc-modal-status .guc-modal-status-grid{grid-template-columns:1fr}}
+#guc-casos-modal-status .guc-modal-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){#guc-casos-modal-status .guc-modal-status-grid{grid-template-columns:1fr}}
 
 @media(max-width:900px){#guc-casos .guc-header-controls{width:100%;justify-content:flex-start;}#guc-casos .guc-search{flex:1 1 220px;}#guc-casos .guc-filter-toggle{padding:6px 10px;}#guc-casos #guc-open-modal{order:3;}}
 @media(max-width:600px){#guc-casos .guc-header{flex-direction:column;align-items:flex-start;}#guc-casos .guc-title{margin-right:0;}#guc-casos .guc-header-controls{width:100%;gap:8px;}#guc-casos .guc-search{width:100%;}#guc-casos .guc-filter-text{display:none;}}

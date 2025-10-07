@@ -7,7 +7,7 @@
     const $root  = $('#guc-casos');
     if (!$root.length) return;
 
-    let $modal = $('#guc-modal');               // modal crear/editar/ver
+    let $modal = $('#guc-casos-modal');               // modal crear/editar/ver
     const $open  = $root.find('#guc-open-modal');
     const $form  = $('#guc-form-caso');
     const $save  = $('#guc-save');
@@ -151,6 +151,14 @@
           }
         }
       });
+      $searchInput.on('input', function(){
+        var val = $(this).val();
+        if (!val || !String(val).trim()) {
+          if (currentSearch !== '') {
+            applySearch('');
+          }
+        }
+      });
     }
 
     if ($filterToggle.length) {
@@ -177,7 +185,7 @@
     const $close = $modal.find('.guc-modal-close, #guc-cancel');
 
     // Modal "Inicio / Acción"
-    let $startModal = $('#guc-modal-start');
+    let $startModal = $('#guc-casos-modal-start');
     let $startForm  = $('#guc-form-inicio');
     const $startSave   = $('#guc-save-start');
     const $startCancel = $('#guc-cancel-start');
@@ -324,7 +332,7 @@
 
     function reallyCloseStart(){
       $startModal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-no-scroll');
+      $('body').removeClass('guc-casos-no-scroll');
       resetStartModal();
     }
 
@@ -344,7 +352,7 @@
       setStartModalMode(mode);
       startDirty = false;
       $startModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-no-scroll');
+      $('body').addClass('guc-casos-no-scroll');
     }
 
     $startModal.find('.guc-modal-close').off('click').on('click', closeStart);
@@ -356,7 +364,7 @@
     });
 
     // Modal estado del caso
-    let $statusModal = $('#guc-modal-status');
+    let $statusModal = $('#guc-casos-modal-status');
     let $statusForm  = $('#guc-form-status');
     const $statusSave   = $('#guc-save-status');
     const $statusCancel = $('#guc-cancel-status');
@@ -389,7 +397,7 @@
       }
       $statusModal.removeClass('show').attr('aria-hidden','true').hide();
       if (!$modal.hasClass('show') && !$startModal.hasClass('show')) {
-        $('body').removeClass('guc-no-scroll');
+        $('body').removeClass('guc-casos-no-scroll');
       }
       resetStatusModal();
     }
@@ -398,7 +406,7 @@
       if (!$statusModal.length) return;
       statusDirty = false;
       $statusModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-no-scroll');
+      $('body').addClass('guc-casos-no-scroll');
     }
 
     if ($statusModal.length){
@@ -428,13 +436,13 @@
       setDirty(false);
     }
 
-    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('guc-no-scroll'); }
+    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('guc-casos-no-scroll'); }
     function closeModal(){
       if (dirty && mode !== 'view') {
         if (!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
       }
       $modal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-no-scroll');
+      $('body').removeClass('guc-casos-no-scroll');
     }
 
     function setMode(m){
@@ -487,22 +495,16 @@
 
     function rememberState(state){
       try {
-        if (state) {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        }
+        if (!state) return;
+        const payload = {
+          openCases: Array.isArray(state.openCases) ? state.openCases : [],
+          panels: state.panels && typeof state.panels === 'object' ? state.panels : {},
+          secretariaBucket: state.secretariaBucket && typeof state.secretariaBucket === 'object' ? state.secretariaBucket : {}
+        };
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
       } catch(e){}
     }
 
-    const storedPreferences = readStoredState();
-    if (storedPreferences && typeof storedPreferences === 'object') {
-      if (storedPreferences.search) currentSearch = String(storedPreferences.search);
-      if (storedPreferences.filter) {
-        var storedFilter = String(storedPreferences.filter);
-        if (storedFilter === 'TAR' || storedFilter === 'JPRD') {
-          currentFilter = storedFilter;
-        }
-      }
-    }
     updateSearchUI();
     updateFilterUI();
     closeFilterMenu(true);
