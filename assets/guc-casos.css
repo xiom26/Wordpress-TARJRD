@@ -89,8 +89,8 @@ body.guc-no-scroll{overflow:hidden;}
 /* icon action buttons */
 .guc-hidden{display:none!important}
 
-.guc-ico{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid #d9c8b3;border-radius:12px;background:#fff;cursor:pointer;margin-right:6px;color:#6b5e50;transition:background .15s ease,transform .12s ease}
-.guc-ico::before{content:"";display:block;width:20px;height:20px;background-color:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain}
+.guc-ico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid #d9c8b3;border-radius:14px;background:#fff;cursor:pointer;margin-right:8px;color:#6b5e50;transition:background .15s ease,transform .12s ease}
+.guc-ico::before{content:"";display:block;width:26px;height:26px;background-color:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain}
 .guc-ico:hover{background:#f4ede4;transform:translateY(-1px)}
 .guc-ico:active{transform:scale(.95)}
 .guc-ico[data-loading="1"]{opacity:.6;cursor:progress}

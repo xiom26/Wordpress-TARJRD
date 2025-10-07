@@ -242,7 +242,8 @@
 
     function fillForm(d){
       $form.find('[name=id]').val(d.id || '');
-      $form.find('[name=nomenclatura]').val(d.nomenclatura || '');
+      const nomen = d.nomenclatura || d.nomenclature || '';
+      $form.find('[name=nomenclatura]').val(nomen);
       $form.find('[name=convocatoria]').val(d.convocatoria || '');
       $form.find('[name=expediente]').val(d.exediente || d.expediente || '');
       $form.find('[name=entidad]').val(d.entidad || '');
