@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.7)
+ * Plugin Name: GUC Casos (v1.6.8)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.7
+ * Version:     1.6.8
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.7';
+  const VERSION = '1.6.8';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -89,23 +89,23 @@ final class GUC_Casos_Compact {
   function shortcode(){
     wp_enqueue_style('guc-casos'); wp_enqueue_script('guc-casos');
     ob_start(); ?>
-    <div id="guc-casos" class="guc-wrap">
+    <div id="guc-casos-app" class="guc-wrap">
       <div class="guc-header">
         <h2 class="guc-title">Gestión de Casos</h2>
         <div class="guc-header-controls">
-          <form id="guc-search-form" class="guc-search" role="search">
-            <label class="guc-visually-hidden" for="guc-search-expediente">Buscar por expediente</label>
-            <input type="search" id="guc-search-expediente" name="expediente" placeholder="N° Expediente" autocomplete="off">
+          <form id="guc-casos-search-form" class="guc-search" role="search">
+            <label class="guc-visually-hidden" for="guc-casos-search-expediente">Buscar por expediente</label>
+            <input type="search" id="guc-casos-search-expediente" name="expediente" placeholder="N° Expediente" autocomplete="off">
             <button type="submit" class="guc-search-btn" aria-label="Buscar expediente">
               <span class="guc-ico-mini guc-ico-search" aria-hidden="true"></span>
             </button>
           </form>
           <div class="guc-filter" data-filter-wrapper data-filter-active="0">
-            <button type="button" id="guc-filter-toggle" class="guc-filter-toggle" aria-haspopup="true" aria-expanded="false">
+            <button type="button" id="guc-casos-filter-toggle" class="guc-filter-toggle" aria-haspopup="true" aria-expanded="false">
               <span class="guc-ico-mini guc-ico-filter" aria-hidden="true"></span>
               <span class="guc-filter-text">Todos</span>
             </button>
-            <div id="guc-filter-menu" class="guc-filter-menu" role="menu" hidden>
+            <div id="guc-casos-filter-menu" class="guc-filter-menu" role="menu" hidden>
               <button type="button" data-filter="" role="menuitemradio" aria-checked="true">
                 <span class="guc-filter-check" aria-hidden="true"></span>
                 <span class="guc-filter-label">Todos</span>
@@ -120,7 +120,7 @@ final class GUC_Casos_Compact {
               </button>
             </div>
           </div>
-          <button id="guc-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>
+          <button id="guc-casos-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>
         </div>
       </div>
       <div class="guc-card">
@@ -133,25 +133,25 @@ final class GUC_Casos_Compact {
             <th>HISTORIAL</th>
             <th>ACCIONES</th>
           </tr></thead>
-          <tbody id="guc-cases-table"><tr><td colspan="6" class="guc-empty">Cargando…</td></tr></tbody>
+          <tbody id="guc-casos-table"><tr><td colspan="6" class="guc-empty">Cargando…</td></tr></tbody>
         </table>
       </div>
     </div>
 
     <!-- Modal crear/editar -->
-    <div id="guc-casos-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-app-modal" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
-          <h3 id="guc-modal-title">Crear nuevo caso</h3>
+          <h3 id="guc-casos-modal-title">Crear nuevo caso</h3>
           <button type="button" class="guc-modal-close">✕</button>
         </div>
         <div class="guc-modal-body">
-          <form id="guc-form-caso">
+          <form id="guc-casos-form-caso">
             <input type="hidden" name="id">
             <div class="guc-row">
               <div class="guc-col guc-field">
                 <label>Asignar Usuario</label>
-                <select id="guc-user-select" name="user_id" required></select>
+                <select id="guc-casos-user-select" name="user_id" required></select>
                 <span class="guc-help">Solo aparecen usuarios sin caso.</span>
               </div>
               <div class="guc-col guc-field">
@@ -197,21 +197,21 @@ final class GUC_Casos_Compact {
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button type="button" id="guc-cancel" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-save"   class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-casos-cancel" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-casos-save"   class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
 
     <!-- Modal iniciar/agregar acción -->
-    <div id="guc-casos-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-app-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
           <h3>Registrar acción</h3>
           <button type="button" class="guc-modal-close">✕</button>
         </div>
         <div class="guc-modal-body">
-          <form id="guc-form-inicio">
+          <form id="guc-casos-form-inicio">
             <input type="hidden" name="case_id">
             <div class="guc-row">
               <div class="guc-col guc-field">
@@ -227,38 +227,38 @@ final class GUC_Casos_Compact {
               <label>Motivo</label>
               <textarea name="motivo" required></textarea>
             </div>
-            <div class="guc-field guc-field-pdf guc-hidden" id="guc-action-pdf" aria-hidden="true" data-has-pdf="0">
+            <div class="guc-field guc-field-pdf guc-hidden" id="guc-casos-action-pdf" aria-hidden="true" data-has-pdf="0">
               <label>PDF</label>
               <div class="guc-pdf-card">
                 <div class="guc-pdf-meta">
-                  <span class="guc-pdf-name" id="guc-action-pdf-name">Sin archivo adjunto</span>
-                  <a href="#" target="_blank" rel="noopener" class="guc-pdf-link" id="guc-action-pdf-open" hidden>Ver documento</a>
+                  <span class="guc-pdf-name" id="guc-casos-action-pdf-name">Sin archivo adjunto</span>
+                  <a href="#" target="_blank" rel="noopener" class="guc-pdf-link" id="guc-casos-action-pdf-open" hidden>Ver documento</a>
                 </div>
                 <div class="guc-pdf-buttons">
-                  <button type="button" class="guc-ico guc-ico-upload" id="guc-action-pdf-upload" aria-label="Subir o reemplazar PDF"></button>
-                  <button type="button" class="guc-ico guc-ico-del" id="guc-action-pdf-delete" aria-label="Eliminar PDF" disabled></button>
+                  <button type="button" class="guc-ico guc-ico-upload" id="guc-casos-action-pdf-upload" aria-label="Subir o reemplazar PDF"></button>
+                  <button type="button" class="guc-ico guc-ico-del" id="guc-casos-action-pdf-delete" aria-label="Eliminar PDF" disabled></button>
                 </div>
               </div>
             </div>
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button type="button" id="guc-cancel-start" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-casos-cancel-start" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-casos-save-start" class="guc-btn guc-btn-primary">Guardar</button>
         </div>
         </div>
       </div>
     </div>
 
     <!-- Modal estado del caso -->
-    <div id="guc-casos-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="guc-casos-app-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="guc-modal-dialog">
         <div class="guc-modal-header">
           <h3>Estado del caso</h3>
           <button type="button" class="guc-modal-close">✕</button>
         </div>
         <div class="guc-modal-body">
-          <form id="guc-form-status">
+          <form id="guc-casos-form-status">
             <input type="hidden" name="case_id">
             <div class="guc-modal-status-grid">
               <div class="guc-field">
@@ -278,8 +278,8 @@ final class GUC_Casos_Compact {
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button type="button" id="guc-cancel-status" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-save-status" class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-casos-cancel-status" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-casos-save-status" class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>

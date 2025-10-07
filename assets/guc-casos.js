@@ -4,19 +4,19 @@
     /* =========================
      *  Referencias base (UI)
      * ========================= */
-    const $root  = $('#guc-casos');
+    const $root  = $('#guc-casos-app');
     if (!$root.length) return;
 
-    let $modal = $('#guc-casos-modal');               // modal crear/editar/ver
-    const $open  = $root.find('#guc-open-modal');
-    const $form  = $('#guc-form-caso');
-    const $save  = $('#guc-save');
-    const $user  = $('#guc-user-select');
-    const $tbody = $root.find('#guc-cases-table');
-    const $searchForm   = $root.find('#guc-search-form');
-    const $searchInput  = $root.find('#guc-search-expediente');
-    const $filterToggle = $root.find('#guc-filter-toggle');
-    const $filterMenu   = $root.find('#guc-filter-menu');
+    let $modal = $('#guc-casos-app-modal');               // modal crear/editar/ver
+    const $open  = $root.find('#guc-casos-open-modal');
+    const $form  = $('#guc-casos-form-caso');
+    const $save  = $('#guc-casos-save');
+    const $user  = $('#guc-casos-user-select');
+    const $tbody = $root.find('#guc-casos-table');
+    const $searchForm   = $root.find('#guc-casos-search-form');
+    const $searchInput  = $root.find('#guc-casos-search-expediente');
+    const $filterToggle = $root.find('#guc-casos-filter-toggle');
+    const $filterMenu   = $root.find('#guc-casos-filter-menu');
     const $filterWrapper= $root.find('[data-filter-wrapper]');
 
     let currentSearch = '';
@@ -54,14 +54,14 @@
     function handleFilterDocClick(e){
       if (!$filterMenu.length) return;
       var $target = $(e.target);
-      if ($target.closest('#guc-casos [data-filter-wrapper]').length) return;
+      if ($target.closest('#guc-casos-app [data-filter-wrapper]').length) return;
       closeFilterMenu();
     }
 
     function handleFilterFocus(e){
       if (!filterMenuOpen) return;
       var $target = $(e.target);
-      if ($target.closest('#guc-casos [data-filter-wrapper]').length) return;
+      if ($target.closest('#guc-casos-app [data-filter-wrapper]').length) return;
       closeFilterMenu();
     }
 
@@ -182,18 +182,18 @@
     if ($modal.length && $modal.parent()[0] !== document.body) {
       $modal = $modal.detach().appendTo('body');
     }
-    const $close = $modal.find('.guc-modal-close, #guc-cancel');
+    const $close = $modal.find('.guc-modal-close, #guc-casos-cancel');
 
     // Modal "Inicio / Acción"
-    let $startModal = $('#guc-casos-modal-start');
-    let $startForm  = $('#guc-form-inicio');
-    const $startSave   = $('#guc-save-start');
-    const $startCancel = $('#guc-cancel-start');
-    const $pdfField    = $('#guc-action-pdf');
-    const $pdfName     = $('#guc-action-pdf-name');
-    const $pdfLink     = $('#guc-action-pdf-open');
-    const $pdfUploadBtn= $('#guc-action-pdf-upload');
-    const $pdfDeleteBtn= $('#guc-action-pdf-delete');
+    let $startModal = $('#guc-casos-app-modal-start');
+    let $startForm  = $('#guc-casos-form-inicio');
+    const $startSave   = $('#guc-casos-save-start');
+    const $startCancel = $('#guc-casos-cancel-start');
+    const $pdfField    = $('#guc-casos-action-pdf');
+    const $pdfName     = $('#guc-casos-action-pdf-name');
+    const $pdfLink     = $('#guc-casos-action-pdf-open');
+    const $pdfUploadBtn= $('#guc-casos-action-pdf-upload');
+    const $pdfDeleteBtn= $('#guc-casos-action-pdf-delete');
 
     if ($startModal.length && $startModal.parent()[0] !== document.body) {
       $startModal = $startModal.detach().appendTo('body');
@@ -332,7 +332,7 @@
 
     function reallyCloseStart(){
       $startModal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-casos-no-scroll');
+      $('body').removeClass('guc-casos-app-no-scroll');
       resetStartModal();
     }
 
@@ -352,7 +352,7 @@
       setStartModalMode(mode);
       startDirty = false;
       $startModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-casos-no-scroll');
+      $('body').addClass('guc-casos-app-no-scroll');
     }
 
     $startModal.find('.guc-modal-close').off('click').on('click', closeStart);
@@ -364,15 +364,15 @@
     });
 
     // Modal estado del caso
-    let $statusModal = $('#guc-casos-modal-status');
-    let $statusForm  = $('#guc-form-status');
-    const $statusSave   = $('#guc-save-status');
-    const $statusCancel = $('#guc-cancel-status');
+    let $statusModal = $('#guc-casos-app-modal-status');
+    let $statusForm  = $('#guc-casos-form-status');
+    const $statusSave   = $('#guc-casos-save-status');
+    const $statusCancel = $('#guc-casos-cancel-status');
     let statusDirty = false;
 
     if ($statusModal.length && $statusModal.parent()[0] !== document.body) {
       $statusModal = $statusModal.detach().appendTo('body');
-      $statusForm = $('#guc-form-status');
+      $statusForm = $('#guc-casos-form-status');
     }
     if ($statusModal.length) {
       $statusModal.removeClass('show').attr('aria-hidden','true').hide();
@@ -397,7 +397,7 @@
       }
       $statusModal.removeClass('show').attr('aria-hidden','true').hide();
       if (!$modal.hasClass('show') && !$startModal.hasClass('show')) {
-        $('body').removeClass('guc-casos-no-scroll');
+        $('body').removeClass('guc-casos-app-no-scroll');
       }
       resetStatusModal();
     }
@@ -406,7 +406,7 @@
       if (!$statusModal.length) return;
       statusDirty = false;
       $statusModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-casos-no-scroll');
+      $('body').addClass('guc-casos-app-no-scroll');
     }
 
     if ($statusModal.length){
@@ -436,19 +436,19 @@
       setDirty(false);
     }
 
-    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('guc-casos-no-scroll'); }
+    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('guc-casos-app-no-scroll'); }
     function closeModal(){
       if (dirty && mode !== 'view') {
         if (!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
       }
       $modal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-casos-no-scroll');
+      $('body').removeClass('guc-casos-app-no-scroll');
     }
 
     function setMode(m){
       mode = m;
       const readonly = (m === 'view');
-      $('#guc-modal-title').text(
+      $('#guc-casos-modal-title').text(
         m === 'create' ? 'Crear nuevo caso' :
         m === 'edit'   ? 'Editar caso'      : 'Ver caso'
       );
