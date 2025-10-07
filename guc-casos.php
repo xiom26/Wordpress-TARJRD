@@ -151,8 +151,8 @@ final class GUC_Casos_Compact {
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button id="guc-cancel" class="guc-btn">Cancelar</button>
-          <button id="guc-save"   class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-cancel" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-save"   class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -197,8 +197,8 @@ final class GUC_Casos_Compact {
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button id="guc-cancel-start" class="guc-btn">Cancelar</button>
-          <button id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-cancel-start" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>

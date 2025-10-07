@@ -167,8 +167,13 @@
       resetStartModal();
     }
 
-    function closeStart(){
-      if (startDirty && $startModal.attr('data-mode') !== 'view'){
+    function closeStart(force){
+      if (force && typeof force.preventDefault === 'function') {
+        force.preventDefault();
+        force = false;
+      }
+      const shouldForce = force === true;
+      if (!shouldForce && startDirty && $startModal.attr('data-mode') !== 'view'){
         if(!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
       }
       reallyCloseStart();
@@ -756,7 +761,7 @@
             if (!(res && res.success)) { alert(res?.data?.message || (editingRow?'No se pudo actualizar la acción':'No se pudo registrar la acción')); return; }
 
             startDirty = false;
-            closeStart(); // cerrar modal y limpiar destino
+            closeStart(true); // cerrar modal y limpiar destino
 
             // refrescar SOLO la subtabla correspondiente
             const $sub = $('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
@@ -792,7 +797,7 @@
         if (!(res && res.success)) { alert(res?.data?.message || 'No se pudo registrar el evento'); return; }
 
         startDirty = false;
-        closeStart();
+        closeStart(true);
 
         // asegurar subfila
         const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $('.guc-start[data-id="'+ data.case_id +'"]').first().closest('tr');
