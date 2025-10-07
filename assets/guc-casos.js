@@ -118,11 +118,12 @@
           $btn.prop('disabled', true).attr('data-loading','1');
           doPdfUpload(section, rowId, this.files[0]).done(function(res){
             if (res && res.success) {
-              const nextUrl = res.data?.pdf_url || '';
+              const nextUrl = (res.data && res.data.pdf_url) ? res.data.pdf_url : '';
               setPdfInfo(nextUrl);
               if (caseId) refreshSectionFor(caseId, section);
             } else {
-              alert(res?.data?.message || 'No se pudo subir el PDF');
+              const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo subir el PDF';
+              alert(message);
             }
           }).fail(function(){
             alert('Error de conexión al subir PDF');
@@ -149,7 +150,8 @@
             setPdfInfo('');
             if (caseId) refreshSectionFor(caseId, section);
           } else {
-            alert(res?.data?.message || 'No se pudo eliminar el PDF');
+            const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo eliminar el PDF';
+            alert(message);
             $btn.prop('disabled', false);
           }
         }).fail(function(){
@@ -160,22 +162,6 @@
         });
       });
     }
-
-    function setStartModalMode(mode){
-      const key = (mode === 'edit') ? 'edit' : 'default';
-      $startModal.attr('data-mode', key);
-      $startModal.find('.guc-modal-header h3').text(START_TITLES[key]);
-    }
-
-    function resetStartModal(){
-      startDirty = false;
-      $startModal.removeAttr('data-target-section data-edit-row data-mode');
-      if ($startForm[0]) {
-        $startForm[0].reset();
-      }
-    }
-
-    $startForm.on('input change', 'input, textarea', function(){ startDirty = true; });
 
     function reallyCloseStart(){
       $startModal.removeClass('show').attr('aria-hidden','true').hide();
@@ -190,8 +176,6 @@
       }
       const shouldForce = force === true;
       if (!shouldForce && startDirty && $startModal.attr('data-mode') !== 'view'){
-    function closeStart(){
-      if (startDirty && $startModal.attr('data-mode') !== 'view'){
         if(!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
       }
       reallyCloseStart();
@@ -377,7 +361,7 @@
       const $sub = ensureSubrow($row, cid);
       if(!$sub || !$sub.length) return null;
 
-      const secBucket = state?.secretariaBucket?.[cid];
+      const secBucket = state && state.secretariaBucket ? state.secretariaBucket[cid] : undefined;
       if (secBucket) {
         const $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
         $wrap.attr('data-bucket', secBucket);
@@ -392,7 +376,8 @@
       renderSection($secWrap);
       renderSection($arbWrap);
 
-      applyPanelState($sub, state?.panels?.[cid]);
+      const panelState = (state && state.panels) ? state.panels[cid] : undefined;
+      applyPanelState($sub, panelState);
       return $sub;
     }
 
@@ -415,23 +400,6 @@
         if (openCaseRow($(this), cid, stored)) {
           opened.add(cid);
         }
-      });
-
-      const applied = new Set();
-
-      (stored.openCases || []).forEach(function(caseId){
-        const cid = String(caseId);
-        const $row = $tbody.find('tr[data-id="'+cid+'"]').first();
-        if(!$row.length) return;
-        openCaseRow($row, cid, stored);
-        applied.add(cid);
-      });
-
-      $tbody.find('tr[data-id][data-has-actions="1"]').each(function(){
-        const cid = String($(this).data('id'));
-        if(applied.has(cid)) return;
-        openCaseRow($(this), cid, stored);
-        applied.add(cid);
       });
 
       rememberState(captureState());
@@ -478,7 +446,8 @@
             $user.val(sid);
           }
         } else {
-          alert(res?.data?.message || 'No se pudieron cargar usuarios');
+          const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudieron cargar usuarios';
+          alert(message);
         }
       }, 'json');
     }
@@ -522,7 +491,10 @@
       $.post(GUC_CASOS.ajax, { action, nonce:GUC_CASOS.nonce, data }, function(res){
         $save.prop('disabled', false);
         if (res && res.success) { setDirty(false); closeModal(); loadTable(); }
-        else alert(res?.data?.message || 'Error al guardar');
+        else {
+          const message = (res && res.data && res.data.message) ? res.data.message : 'Error al guardar';
+          alert(message);
+        }
       }, 'json').fail(function(){
         $save.prop('disabled', false); alert('Error de conexión');
       });
@@ -536,7 +508,10 @@
         if (!confirm('¿Eliminar este caso?')) return;
         $.post(GUC_CASOS.ajax, { action:'guc_delete_case', nonce:GUC_CASOS.nonce, id }, function(res){
           if (res && res.success) loadTable();
-          else alert(res?.data?.message || 'No se pudo eliminar');
+          else {
+            const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo eliminar';
+            alert(message);
+          }
         }, 'json').fail(function(){ alert('Error de conexión al eliminar'); });
         return;
       }
@@ -709,7 +684,11 @@
       const section = resolveSectionKey($btn);
 
       $.post(GUC_CASOS.ajax, { action:'guc_get_section_row', nonce:GUC_CASOS.nonce, section, row_id: rowId }, function(res){
-        if(!(res && res.success)){ alert(res?.data?.message || 'No se pudo obtener la fila'); return; }
+        if(!(res && res.success)){
+          const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo obtener la fila';
+          alert(message);
+          return;
+        }
         const d = res.data || {};
         resetStartModal();
         $startModal.attr('data-target-section', section)
@@ -718,7 +697,6 @@
         if (d.case_id) {
           $startModal.attr('data-edit-case', String(d.case_id));
         }
-        $startModal.attr('data-target-section', section).attr('data-edit-row', String(rowId));
         $startForm.find('[name=case_id]').val(d.case_id || '');
         $startForm.find('[name=situacion]').val(d.situacion || '');
         $startForm.find('[name=motivo]').val(d.motivo || '');
@@ -746,7 +724,8 @@
         if (res && res.success){
           renderSection($wrap);
         } else {
-          alert(res?.data?.message || 'No se pudo eliminar la acción');
+          const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo eliminar la acción';
+          alert(message);
           $btn.prop('disabled', false);
         }
       }, 'json').fail(function(){
@@ -765,9 +744,9 @@
       const data = Object.fromEntries(new FormData($startForm[0]).entries());
 
       // validaciones comunes
-      if (!data.case_id)           { alert('ID del caso no válido.'); return; }
-      if (!data.situacion?.trim()) { alert('Describe la situación.'); return; }
-      if (!data.motivo?.trim())    { alert('Indica el motivo.'); return; }
+      if (!data.case_id) { alert('ID del caso no válido.'); return; }
+      if (!data.situacion || !String(data.situacion).trim()) { alert('Describe la situación.'); return; }
+      if (!data.motivo || !String(data.motivo).trim())    { alert('Indica el motivo.'); return; }
 
       $startSave.prop('disabled', true);
 
@@ -796,11 +775,15 @@
           if (editingRow) { endpoint = 'guc_update_section_row'; payload['row_id'] = editingRow; }
           $.post(GUC_CASOS.ajax, Object.assign({ action:endpoint }, payload), function(res){
             $startSave.prop('disabled', false);
-            if (!(res && res.success)) { alert(res?.data?.message || (editingRow?'No se pudo actualizar la acción':'No se pudo registrar la acción')); return; }
+            if (!(res && res.success)) {
+              var fallback = editingRow ? 'No se pudo actualizar la acción' : 'No se pudo registrar la acción';
+              var message = (res && res.data && res.data.message) ? res.data.message : fallback;
+              alert(message);
+              return;
+            }
 
             startDirty = false;
             closeStart(true); // cerrar modal y limpiar destino
-            closeStart(); // cerrar modal y limpiar destino
 
             // refrescar SOLO la subtabla correspondiente
             const $sub = $('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
@@ -833,7 +816,11 @@
 
       $.post(GUC_CASOS.ajax, { action:'guc_create_case_event', nonce:GUC_CASOS.nonce, data }, function(res){
         $startSave.prop('disabled', false);
-        if (!(res && res.success)) { alert(res?.data?.message || 'No se pudo registrar el evento'); return; }
+        if (!(res && res.success)) {
+          const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo registrar el evento';
+          alert(message);
+          return;
+        }
 
         startDirty = false;
         closeStart(true);
@@ -904,11 +891,6 @@
       if (!rowId || !section) return;
 
       const $wrap = $btn.closest('.guc-subtable-wrap');
-      const rowId   = $btn.closest('tr').data('row-id');
-      if (!rowId || !section) return;
-
-      const $wrap = $btn.closest('.guc-subtable-wrap');
-      const originalHtml = $btn.html();
 
       const $input = $('<input type="file" accept="application/pdf" style="display:none">');
       $('body').append($input);
@@ -923,7 +905,8 @@
               refreshSectionFor(caseId, section);
             }
           } else {
-            alert(res?.data?.message || 'No se pudo subir el PDF');
+            const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo subir el PDF';
+            alert(message);
           }
         }).fail(function(){
           alert('Error de conexión al subir PDF');
@@ -932,52 +915,6 @@
           $input.remove();
         });
       }).trigger('click');
-        const fd = new FormData();
-        fd.append('action','guc_upload_pdf');
-        fd.append('nonce', GUC_CASOS.nonce);
-        fd.append('section', section);
-        fd.append('row_id', rowId);
-        fd.append('file', this.files[0]);
-
-        $btn.prop('disabled', true).attr('data-loading','1').text('Subiendo...');
-        $.ajax({
-          url: GUC_CASOS.ajax,
-          type: 'POST',
-          data: fd, contentType:false, processData:false, dataType:'json'
-        }).done(function(res){
-          if (res && res.success) {
-            renderSection($wrap);
-          } else {
-            alert(res?.data?.message || 'No se pudo subir el PDF');
-            $btn.prop('disabled', false).html(originalHtml);
-          }
-        }).fail(function(){
-          alert('Error de conexión al subir PDF');
-          $btn.prop('disabled', false).html(originalHtml);
-        }).always(function(){ $input.remove(); });
-      }).trigger('click');
-    });
-
-
-    $(document).on('click', '.guc-clear-pdf', function(){
-      const $btn = $(this);
-      const rowId = $btn.closest('tr').data('row-id');
-      const section = resolveSectionKey($btn);
-      if (!rowId || !section) return;
-      const $wrap = $btn.closest('.guc-subtable-wrap');
-      if (!confirm('¿Eliminar el PDF de esta fila?')) return;
-      $btn.prop('disabled', true);
-      $.post(GUC_CASOS.ajax, { action:'guc_clear_pdf', nonce:GUC_CASOS.nonce, section, row_id: rowId }, function(res){
-        if (res && res.success){
-          renderSection($wrap);
-        } else {
-          alert(res?.data?.message || 'No se pudo eliminar el PDF');
-          $btn.prop('disabled', false);
-        }
-      }, 'json').fail(function(){
-        alert('Error de conexión al eliminar PDF');
-        $btn.prop('disabled', false);
-      });
     });
     /* ==========================================================
      *  Carga inicial de tabla de casos
