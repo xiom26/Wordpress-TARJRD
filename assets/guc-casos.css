@@ -1,7 +1,31 @@
 /* ===== base ===== */
 #guc-casos.guc-wrap{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#2b2b2b;}
-#guc-casos .guc-header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px;}
-#guc-casos .guc-title{font-weight:800;font-size:22px;margin:0;}
+#guc-casos .guc-header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px;gap:12px;flex-wrap:wrap;}
+#guc-casos .guc-title{font-weight:800;font-size:22px;margin:0;margin-right:auto;}
+#guc-casos .guc-header-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+#guc-casos .guc-header-controls>*{flex-shrink:0;}
+#guc-casos .guc-search{display:flex;align-items:center;gap:6px;border:1px solid #d9c8b3;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);padding:4px 6px;min-width:220px;}
+#guc-casos .guc-search input{border:0;background:transparent;padding:6px 8px 6px 10px;font-size:14px;color:#3f3a34;min-width:0;flex:1 1 auto;}
+#guc-casos .guc-search input:focus{outline:0;}
+#guc-casos .guc-search:focus-within{box-shadow:0 0 0 2px rgba(191,162,123,.28);}
+#guc-casos .guc-search-btn{border:0;background:#bfa27b;color:#fff;border-radius:999px;width:40px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s ease,transform .12s ease;}
+#guc-casos .guc-search-btn:hover{background:#ae926a;}
+#guc-casos .guc-search-btn:active{transform:scale(.94);}
+#guc-casos .guc-filter{position:relative;}
+#guc-casos .guc-filter-toggle{display:flex;align-items:center;gap:6px;border:1px solid #d9c8b3;border-radius:999px;background:#ede6dc;color:#4a3a2a;font-weight:600;padding:6px 12px;cursor:pointer;transition:background .15s ease,transform .12s ease;}
+#guc-casos .guc-filter-toggle:hover{background:#e1d7c8;}
+#guc-casos .guc-filter-toggle:active{transform:scale(.97);}
+#guc-casos .guc-filter-toggle[data-active="1"]{background:#bfa27b;color:#fff;border-color:#b08f61;}
+#guc-casos .guc-filter-toggle[data-active="1"] .guc-ico-mini::before{background-color:#fff;}
+#guc-casos .guc-filter-text{font-size:14px;}
+#guc-casos .guc-filter-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:160px;background:#fff;border:1px solid #eadfce;border-radius:14px;box-shadow:0 14px 28px rgba(0,0,0,.16);padding:8px;display:flex;flex-direction:column;z-index:10;}
+#guc-casos .guc-filter-menu button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:10px;font-weight:600;color:#4a3a2a;cursor:pointer;transition:background .15s ease;}
+#guc-casos .guc-filter-menu button:hover,#guc-casos .guc-filter-menu button.is-active{background:#f0e7db;}
+#guc-casos .guc-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+#guc-casos .guc-ico-mini{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;}
+#guc-casos .guc-ico-mini::before{content:"";display:block;width:18px;height:18px;background-color:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain;}
+#guc-casos .guc-ico-mini.guc-ico-search::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 14 15.5l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 10 5a4.5 4.5 0 0 1-.5 9z'/></svg>");}
+#guc-casos .guc-ico-mini.guc-ico-filter::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M3 5h18v2l-7 7v4l-4 3v-7L3 7V5z'/></svg>");}
 
 /* ===== botones ===== */
 #guc-casos .guc-btn{border:0;border-radius:14px;padding:10px 16px;cursor:pointer;transition:.15s;box-shadow:0 2px 6px rgba(0,0,0,.08);font-weight:600;}
@@ -14,6 +38,7 @@
 #guc-casos .guc-table{width:100%;border-collapse:separate;border-spacing:0;}
 #guc-casos .guc-table thead th{background:#f6f1ea;color:#2b241d;font-weight:700;padding:12px;border-bottom:1px solid #eadfce;text-align:left;}
 #guc-casos .guc-table td{padding:12px;border-bottom:1px solid #f1ebe2;color:#2b2b2b;}
+#guc-casos .guc-table tbody tr[data-search-match="1"] td{background:#fff6e8;}
 #guc-casos .guc-empty{color:#8a7a66;text-align:center;padding:16px;}
 
 /* ===== acciones ===== */
@@ -194,3 +219,6 @@ body.guc-no-scroll{overflow:hidden;}
 
 #guc-modal-status .guc-modal-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){#guc-modal-status .guc-modal-status-grid{grid-template-columns:1fr}}
+
+@media(max-width:900px){#guc-casos .guc-header-controls{width:100%;justify-content:flex-start;}#guc-casos .guc-search{flex:1 1 220px;}#guc-casos .guc-filter-toggle{padding:6px 10px;}#guc-casos #guc-open-modal{order:3;}}
+@media(max-width:600px){#guc-casos .guc-header{flex-direction:column;align-items:flex-start;}#guc-casos .guc-title{margin-right:0;}#guc-casos .guc-header-controls{width:100%;gap:8px;}#guc-casos .guc-search{width:100%;}#guc-casos .guc-filter-text{display:none;}}

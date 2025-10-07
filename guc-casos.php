@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.4)
+ * Plugin Name: GUC Casos (v1.6.5)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.4
+ * Version:     1.6.5
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.4';
+  const VERSION = '1.6.5';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -92,7 +92,27 @@ final class GUC_Casos_Compact {
     <div id="guc-casos" class="guc-wrap">
       <div class="guc-header">
         <h2 class="guc-title">Gestión de Casos</h2>
-        <button id="guc-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>
+        <div class="guc-header-controls">
+          <form id="guc-search-form" class="guc-search" role="search">
+            <label class="guc-visually-hidden" for="guc-search-expediente">Buscar por expediente</label>
+            <input type="search" id="guc-search-expediente" name="expediente" placeholder="N° Expediente" autocomplete="off">
+            <button type="submit" class="guc-search-btn" aria-label="Buscar expediente">
+              <span class="guc-ico-mini guc-ico-search" aria-hidden="true"></span>
+            </button>
+          </form>
+          <div class="guc-filter" data-filter-wrapper>
+            <button type="button" id="guc-filter-toggle" class="guc-filter-toggle" aria-haspopup="true" aria-expanded="false">
+              <span class="guc-ico-mini guc-ico-filter" aria-hidden="true"></span>
+              <span class="guc-filter-text">Todos</span>
+            </button>
+            <div id="guc-filter-menu" class="guc-filter-menu" role="menu" hidden>
+              <button type="button" data-filter="" role="menuitem">Todos</button>
+              <button type="button" data-filter="TAR" role="menuitem">TAR</button>
+              <button type="button" data-filter="JPRD" role="menuitem">JPRD</button>
+            </div>
+          </div>
+          <button id="guc-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>
+        </div>
       </div>
       <div class="guc-card">
         <table class="guc-table">
@@ -289,7 +309,33 @@ final class GUC_Casos_Compact {
   // ====== AJAX ======
   public function guc_list_cases(){
     $this->check_nonce(); global $wpdb;
-    $rows = $wpdb->get_results("SELECT c.*, u.username FROM {$this->t_cases} c LEFT JOIN {$this->t_users} u ON u.id=c.user_id ORDER BY c.id DESC");
+    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
+    $filter = isset($_POST['filter']) ? sanitize_text_field(wp_unslash($_POST['filter'])) : '';
+
+    $conditions = [];
+    $params = [];
+    if ($filter === 'TAR' || $filter === 'JPRD') {
+      $conditions[] = 'c.case_type = %s';
+      $params[] = $filter;
+    }
+
+    $order = ' ORDER BY c.id DESC';
+    if ($search !== '') {
+      $like = '%' . $wpdb->esc_like($search) . '%';
+      $order = ' ORDER BY CASE WHEN c.expediente LIKE %s THEN 0 ELSE 1 END, c.id DESC';
+      $params[] = $like;
+    }
+
+    $sql = "SELECT c.*, u.username FROM {$this->t_cases} c LEFT JOIN {$this->t_users} u ON u.id=c.user_id";
+    if ($conditions) {
+      $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+    $sql .= $order;
+    if ($params) {
+      $sql = $wpdb->prepare($sql, $params);
+    }
+
+    $rows = $wpdb->get_results($sql);
     ob_start();
     if (!$rows){ echo '<tr><td colspan="6" class="guc-empty">Sin casos.</td></tr>'; }
     else foreach($rows as $r){
@@ -300,7 +346,9 @@ final class GUC_Casos_Compact {
       $has_actions = $this->case_has_actions($r->id);
       $hist_btn = $has_actions ? 'Agregar acción' : 'Iniciar caso';
 
-      echo '<tr data-id="'.intval($r->id).'" data-has-actions="'.($has_actions ? '1' : '0').'">';
+      $match = ($search !== '' && stripos((string) $r->expediente, $search) !== false);
+      $match_attr = $match ? ' data-search-match="1"' : '';
+      echo '<tr data-id="'.intval($r->id).'" data-has-actions="'.($has_actions ? '1' : '0').'"'.$match_attr.'>';
       echo "<td>{$exp}</td><td>{$ent}</td><td>{$nom}</td><td>{$usr}</td>";
       echo '<td><button class="guc-btn guc-btn-secondary guc-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
       echo '<td>';

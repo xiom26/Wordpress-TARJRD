@@ -13,6 +13,132 @@
     const $save  = $('#guc-save');
     const $user  = $('#guc-user-select');
     const $tbody = $root.find('#guc-cases-table');
+    const $searchForm   = $root.find('#guc-search-form');
+    const $searchInput  = $root.find('#guc-search-expediente');
+    const $filterToggle = $root.find('#guc-filter-toggle');
+    const $filterMenu   = $root.find('#guc-filter-menu');
+
+    let currentSearch = '';
+    let currentFilter = '';
+    let filterMenuOpen = false;
+
+    function updateSearchUI(){
+      if ($searchInput.length) {
+        $searchInput.val(currentSearch);
+      }
+    }
+
+    function updateFilterUI(){
+      if ($filterToggle.length) {
+        var label = 'Todos';
+        if (currentFilter === 'TAR') label = 'TAR';
+        else if (currentFilter === 'JPRD') label = 'JPRD';
+        $filterToggle.attr('data-active', currentFilter ? '1' : '0');
+        $filterToggle.attr('data-filter-value', currentFilter || '');
+        var $label = $filterToggle.find('.guc-filter-text');
+        if ($label.length) { $label.text(label); }
+      }
+      if ($filterMenu.length) {
+        $filterMenu.find('button[data-filter]').each(function(){
+          var val = $(this).attr('data-filter') || '';
+          $(this).toggleClass('is-active', val === currentFilter);
+        });
+      }
+    }
+
+    function handleFilterDocClick(e){
+      if (!$filterMenu.length) return;
+      var $target = $(e.target);
+      if ($target.closest('#guc-casos .guc-filter').length) return;
+      closeFilterMenu();
+    }
+
+    function handleFilterKeydown(e){
+      var key = e.key || e.keyCode;
+      if (key === 'Escape' || key === 'Esc' || key === 27) {
+        closeFilterMenu();
+      }
+    }
+
+    function openFilterMenu(){
+      if (!$filterMenu.length || !$filterToggle.length) return;
+      if (filterMenuOpen) return;
+      filterMenuOpen = true;
+      $filterToggle.attr('aria-expanded','true');
+      $filterMenu.removeAttr('hidden');
+      setTimeout(function(){
+        $(document).on('click.gucFilter', handleFilterDocClick);
+        $(document).on('keydown.gucFilter', handleFilterKeydown);
+      }, 0);
+    }
+
+    function closeFilterMenu(){
+      if (!$filterMenu.length || !$filterToggle.length) return;
+      if (!filterMenuOpen) return;
+      filterMenuOpen = false;
+      $filterToggle.attr('aria-expanded','false');
+      $filterMenu.attr('hidden','hidden');
+      $(document).off('.gucFilter');
+    }
+
+    function applySearch(raw){
+      var next = raw ? String(raw).trim() : '';
+      if (next === currentSearch) {
+        return;
+      }
+      currentSearch = next;
+      updateSearchUI();
+      loadTable();
+    }
+
+    function applyFilter(value){
+      var next = (value === 'TAR' || value === 'JPRD') ? value : '';
+      if (next === currentFilter) {
+        closeFilterMenu();
+        return;
+      }
+      currentFilter = next;
+      updateFilterUI();
+      closeFilterMenu();
+      loadTable();
+    }
+
+    if ($searchForm.length) {
+      $searchForm.on('submit', function(e){
+        e.preventDefault();
+        applySearch($searchInput.length ? $searchInput.val() : '');
+      });
+    }
+
+    if ($searchInput.length) {
+      $searchInput.on('keydown', function(e){
+        if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+          if (currentSearch) {
+            e.preventDefault();
+            applySearch('');
+          } else {
+            $(this).blur();
+          }
+        }
+      });
+    }
+
+    if ($filterToggle.length) {
+      $filterToggle.on('click', function(e){
+        e.preventDefault();
+        if (filterMenuOpen) closeFilterMenu();
+        else openFilterMenu();
+      });
+    }
+
+    if ($filterMenu.length) {
+      $filterMenu.on('click', 'button[data-filter]', function(e){
+        e.preventDefault();
+        var val = $(this).attr('data-filter') || '';
+        applyFilter(val);
+      });
+    }
+
 
     // Mover modales a body (evita cortes por overflow)
     if ($modal.length && $modal.parent()[0] !== document.body) {
@@ -337,8 +463,16 @@
       } catch(e){}
     }
 
+    const storedPreferences = readStoredState();
+    if (storedPreferences && typeof storedPreferences === 'object') {
+      if (storedPreferences.search) currentSearch = String(storedPreferences.search);
+      if (storedPreferences.filter) currentFilter = String(storedPreferences.filter);
+    }
+    updateSearchUI();
+    updateFilterUI();
+
     function captureState(){
-      const state = { openCases: [], panels:{}, secretariaBucket:{} };
+      const state = { openCases: [], panels:{}, secretariaBucket:{}, search: currentSearch || '', filter: currentFilter || '' };
       $root.find('tr.guc-subrow').each(function(){
         const caseId = String($(this).attr('data-parent') || '');
         if(!caseId) return;
@@ -443,7 +577,11 @@
     }
 
     function restoreState(state){
-      const stored = state || readStoredState() || { openCases:[], panels:{}, secretariaBucket:{} };
+      const stored = state || readStoredState() || { openCases:[], panels:{}, secretariaBucket:{}, search:'', filter:'' };
+      currentSearch = stored.search ? String(stored.search) : '';
+      currentFilter = stored.filter ? String(stored.filter) : '';
+      updateSearchUI();
+      updateFilterUI();
       const requested = new Set((stored.openCases || []).map(String));
       const opened = new Set();
 
@@ -471,11 +609,15 @@
      *  Datos (AJAX)
      * ========================= */
     function loadTable(){
+      closeFilterMenu();
       const runtimeState = captureState();
-      if (runtimeState.openCases && runtimeState.openCases.length) {
-        rememberState(runtimeState);
-      }
-      $.post(GUC_CASOS.ajax, { action:'guc_list_cases', nonce:GUC_CASOS.nonce }, function(res){
+      rememberState(runtimeState);
+      $.post(GUC_CASOS.ajax, {
+        action:'guc_list_cases',
+        nonce:GUC_CASOS.nonce,
+        search: currentSearch,
+        filter: currentFilter
+      }, function(res){
         if (res && res.success) {
           $tbody.html(res.data.html);
           restoreState(runtimeState.openCases && runtimeState.openCases.length ? runtimeState : null);
