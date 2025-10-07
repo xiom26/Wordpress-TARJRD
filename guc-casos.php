@@ -192,6 +192,19 @@ final class GUC_Casos_Compact {
     return null;
   }
 
+  private function case_has_actions($case_id){
+    global $wpdb;
+    $case_id = intval($case_id);
+    if(!$case_id) return false;
+    $tables = [$this->t_events, $this->t_pre, $this->t_arb, $this->t_sec_arbitral, $this->t_sec_general];
+    foreach($tables as $t){
+      if(!$t) continue;
+      $count = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM `$t` WHERE case_id=%d", $case_id)));
+      if($count > 0) return true;
+    }
+    return false;
+  }
+
   // ====== AJAX ======
   public function guc_list_cases(){
     $this->check_nonce(); global $wpdb;
@@ -203,10 +216,10 @@ final class GUC_Casos_Compact {
       $ent = $this->html_esc($r->entidad);
       $nom = $this->html_esc($r->nomenclature);
       $usr = $this->html_esc($r->username);
-      $has_events = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->t_events} WHERE case_id=%d",$r->id))) > 0;
-      $hist_btn = $has_events ? 'Agregar acción' : 'Iniciar caso';
+      $has_actions = $this->case_has_actions($r->id);
+      $hist_btn = $has_actions ? 'Agregar acción' : 'Iniciar caso';
 
-      echo '<tr data-id="'.intval($r->id).'">';
+      echo '<tr data-id="'.intval($r->id).'" data-has-actions="'.($has_actions ? '1' : '0').'">';
       echo "<td>{$exp}</td><td>{$ent}</td><td>{$nom}</td><td>{$usr}</td>";
       echo '<td><button class="guc-btn guc-btn-secondary guc-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
       echo '<td>';
@@ -223,7 +236,16 @@ final class GUC_Casos_Compact {
 
   public function guc_list_users(){
     $this->check_nonce(); global $wpdb;
-    $rows = $wpdb->get_results("SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) ORDER BY u.id DESC");
+    $include_id = intval($_POST['include_id'] ?? 0);
+    if ($include_id) {
+      $sql = $wpdb->prepare(
+        "SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) OR u.id=%d ORDER BY u.id DESC",
+        $include_id
+      );
+    } else {
+      $sql = "SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) ORDER BY u.id DESC";
+    }
+    $rows = $wpdb->get_results($sql);
     $out = [];
     foreach($rows as $r){
       $out[] = ['id'=>intval($r->id),'username'=>$r->username,'entity'=>$r->entity,'expediente'=>$r->expediente];
