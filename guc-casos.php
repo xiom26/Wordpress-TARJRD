@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.3)
+ * Plugin Name: GUC Casos (v1.6.4)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.3
+ * Version:     1.6.4
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.3';
+  const VERSION = '1.6.4';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 

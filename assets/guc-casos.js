@@ -4,18 +4,21 @@
     /* =========================
      *  Referencias base (UI)
      * ========================= */
+    const $root  = $('#guc-casos');
+    if (!$root.length) return;
+
     let $modal = $('#guc-modal');               // modal crear/editar/ver
-    const $open  = $('#guc-open-modal');
-    const $close = $('.guc-modal-close, #guc-cancel');
+    const $open  = $root.find('#guc-open-modal');
     const $form  = $('#guc-form-caso');
     const $save  = $('#guc-save');
     const $user  = $('#guc-user-select');
-    const $tbody = $('#guc-cases-table');
+    const $tbody = $root.find('#guc-cases-table');
 
     // Mover modales a body (evita cortes por overflow)
     if ($modal.length && $modal.parent()[0] !== document.body) {
       $modal = $modal.detach().appendTo('body');
     }
+    const $close = $modal.find('.guc-modal-close, #guc-cancel');
 
     // Modal "Inicio / Acción"
     let $startModal = $('#guc-modal-start');
@@ -336,7 +339,7 @@
 
     function captureState(){
       const state = { openCases: [], panels:{}, secretariaBucket:{} };
-      $('tr.guc-subrow').each(function(){
+      $root.find('tr.guc-subrow').each(function(){
         const caseId = String($(this).attr('data-parent') || '');
         if(!caseId) return;
         if (!state.openCases.includes(caseId)) state.openCases.push(caseId);
@@ -365,7 +368,7 @@
 
     function setCaseHasActions(caseId, has){
       const cid = String(caseId);
-      const $btn = $('.guc-start[data-id="'+cid+'"]').first();
+      const $btn = $root.find('.guc-start[data-id="'+cid+'"]').first();
       if ($btn.length) {
         $btn.text(has ? 'Agregar acción' : 'Iniciar caso');
         $btn.closest('tr').attr('data-has-actions', has ? '1' : '0');
@@ -394,7 +397,7 @@
     function refreshSectionFor(caseId, sectionKey){
       if(!caseId) return;
       const cid = String(caseId);
-      const $sub = $('tr.guc-subrow[data-parent="'+cid+'"]').first();
+      const $sub = $root.find('tr.guc-subrow[data-parent="'+cid+'"]').first();
       if(!$sub.length) return;
       let $wrap;
       if (sectionKey === 'pre') {
@@ -529,7 +532,7 @@
       }
     });
     $modal.on('mousedown', function(e){
-      const $dialog = $('.guc-modal-dialog').first();
+      const $dialog = $modal.find('.guc-modal-dialog').first();
       if ($dialog.is(e.target) || $dialog.has(e.target).length) return;
       closeModal();
     });
@@ -750,7 +753,7 @@
     }
 
     // acordeón
-    $(document).on('click', '.guc-toggle', function () {
+    $root.on('click', '.guc-toggle', function () {
       const $btn = $(this);
       const $panel = $btn.next('.guc-panel');
       const expanded = $btn.attr('aria-expanded') === 'true';
@@ -763,7 +766,7 @@
     /* ==========================================================
      *  Botón "Agregar acción" (marca el destino)
      * ========================================================== */
-    $(document).on('click', '.guc-add-action', function(){
+    $root.on('click', '.guc-add-action', function(){
       const sectionKey = $(this).data('section'); // pre | sec_arbitral | sec_general | arb
       const caseId = $(this).data('case-id');
 
@@ -784,7 +787,7 @@
     /* ==========================================================
      *  Editar fila de acción (reutiliza el mismo modal)
      * ========================================================== */
-    $(document).on('click', '.guc-row-edit', function(){
+    $root.on('click', '.guc-row-edit', function(){
       const $btn = $(this);
       const $row = $btn.closest('tr');
       const rowId = $row.data('row-id');
@@ -821,7 +824,7 @@
       }, 'json').fail(function(){ alert('Error de conexión'); });
     });
 
-    $(document).on('click', '.guc-row-del', function(){
+    $root.on('click', '.guc-row-del', function(){
       const $btn = $(this);
       const section = resolveSectionKey($btn);
       const rowId = $btn.closest('tr').data('row-id');
@@ -895,7 +898,7 @@
             closeStart(true); // cerrar modal y limpiar destino
 
             // refrescar SOLO la subtabla correspondiente
-            const $sub = $('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
+            const $sub = $root.find('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
             let $wrap;
             if (finalBucket === 'pre') {
               $wrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
@@ -935,7 +938,7 @@
         closeStart(true);
 
         // asegurar subfila
-        const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $('.guc-start[data-id="'+ data.case_id +'"]').first().closest('tr');
+        const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $root.find('.guc-start[data-id="'+ data.case_id +'"]').first().closest('tr');
         const $sub = ensureSubrow($row, data.case_id);
 
         // 1) insertar PRIMER registro visible en PRE
@@ -991,7 +994,7 @@
     /* ==========================================================
      *  Subida de PDF (delegado por fila)
      * ========================================================== */
-    $(document).on('click', '.guc-upload', function(){
+    $root.on('click', '.guc-upload', function(){
       const $btn = $(this);
       const section = resolveSectionKey($btn); // pre | sec_arbitral | sec_general | arb
       const $row = $btn.closest('tr');
