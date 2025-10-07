@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.0)
+ * Plugin Name: GUC Casos (v1.6.1)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.0
+ * Version:     1.6.1
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.0';
+  const VERSION = '1.6.1';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -46,8 +46,23 @@ final class GUC_Casos_Compact {
 
   function assets(){
     $base = plugin_dir_url(__FILE__);
-    wp_register_style ('guc-casos', $base.'assets/guc-casos.css', [], self::VERSION);
-    wp_register_script('guc-casos', $base.'assets/guc-casos.js', ['jquery'], self::VERSION, true);
+    $path = plugin_dir_path(__FILE__);
+
+    $css_ver = self::VERSION;
+    $js_ver  = self::VERSION;
+
+    $css_path = $path.'assets/guc-casos.css';
+    $js_path  = $path.'assets/guc-casos.js';
+
+    if (file_exists($css_path)) {
+      $css_ver .= '.'.filemtime($css_path);
+    }
+    if (file_exists($js_path)) {
+      $js_ver .= '.'.filemtime($js_path);
+    }
+
+    wp_register_style ('guc-casos', $base.'assets/guc-casos.css', [], $css_ver);
+    wp_register_script('guc-casos', $base.'assets/guc-casos.js', ['jquery'], $js_ver, true);
     wp_localize_script('guc-casos','GUC_CASOS',[
       'ajax'=>admin_url('admin-ajax.php'),
       'nonce'=>wp_create_nonce('guc_casos_nonce'),
