@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.0)
+ * Plugin Name: GUC Casos (v1.6.2)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.0
+ * Version:     1.6.2
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.0';
+  const VERSION = '1.6.2';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -46,8 +46,23 @@ final class GUC_Casos_Compact {
 
   function assets(){
     $base = plugin_dir_url(__FILE__);
-    wp_register_style ('guc-casos', $base.'assets/guc-casos.css', [], self::VERSION);
-    wp_register_script('guc-casos', $base.'assets/guc-casos.js', ['jquery'], self::VERSION, true);
+    $path = plugin_dir_path(__FILE__);
+
+    $css_ver = self::VERSION;
+    $js_ver  = self::VERSION;
+
+    $css_path = $path.'assets/guc-casos.css';
+    $js_path  = $path.'assets/guc-casos.js';
+
+    if (file_exists($css_path)) {
+      $css_ver .= '.'.filemtime($css_path);
+    }
+    if (file_exists($js_path)) {
+      $js_ver .= '.'.filemtime($js_path);
+    }
+
+    wp_register_style ('guc-casos', $base.'assets/guc-casos.css', [], $css_ver);
+    wp_register_script('guc-casos', $base.'assets/guc-casos.js', ['jquery'], $js_ver, true);
     wp_localize_script('guc-casos','GUC_CASOS',[
       'ajax'=>admin_url('admin-ajax.php'),
       'nonce'=>wp_create_nonce('guc_casos_nonce'),
@@ -136,8 +151,8 @@ final class GUC_Casos_Compact {
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button id="guc-cancel" class="guc-btn">Cancelar</button>
-          <button id="guc-save"   class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-cancel" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-save"   class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -166,11 +181,24 @@ final class GUC_Casos_Compact {
               <label>Motivo</label>
               <textarea name="motivo" required></textarea>
             </div>
+            <div class="guc-field guc-field-pdf guc-hidden" id="guc-action-pdf" aria-hidden="true" data-has-pdf="0">
+              <label>PDF</label>
+              <div class="guc-pdf-card">
+                <div class="guc-pdf-meta">
+                  <span class="guc-pdf-name" id="guc-action-pdf-name">Sin archivo adjunto</span>
+                  <a href="#" target="_blank" rel="noopener" class="guc-pdf-link" id="guc-action-pdf-open" hidden>Ver documento</a>
+                </div>
+                <div class="guc-pdf-buttons">
+                  <button type="button" class="guc-ico guc-ico-upload" id="guc-action-pdf-upload" aria-label="Subir o reemplazar PDF"></button>
+                  <button type="button" class="guc-ico guc-ico-del" id="guc-action-pdf-delete" aria-label="Eliminar PDF" disabled></button>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
         <div class="guc-modal-footer">
-          <button id="guc-cancel-start" class="guc-btn">Cancelar</button>
-          <button id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
+          <button type="button" id="guc-cancel-start" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -192,6 +220,19 @@ final class GUC_Casos_Compact {
     return null;
   }
 
+  private function case_has_actions($case_id){
+    global $wpdb;
+    $case_id = intval($case_id);
+    if(!$case_id) return false;
+    $tables = [$this->t_events, $this->t_pre, $this->t_arb, $this->t_sec_arbitral, $this->t_sec_general];
+    foreach($tables as $t){
+      if(!$t) continue;
+      $count = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM `$t` WHERE case_id=%d", $case_id)));
+      if($count > 0) return true;
+    }
+    return false;
+  }
+
   // ====== AJAX ======
   public function guc_list_cases(){
     $this->check_nonce(); global $wpdb;
@@ -203,10 +244,10 @@ final class GUC_Casos_Compact {
       $ent = $this->html_esc($r->entidad);
       $nom = $this->html_esc($r->nomenclature);
       $usr = $this->html_esc($r->username);
-      $has_events = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->t_events} WHERE case_id=%d",$r->id))) > 0;
-      $hist_btn = $has_events ? 'Agregar acción' : 'Iniciar caso';
+      $has_actions = $this->case_has_actions($r->id);
+      $hist_btn = $has_actions ? 'Agregar acción' : 'Iniciar caso';
 
-      echo '<tr data-id="'.intval($r->id).'">';
+      echo '<tr data-id="'.intval($r->id).'" data-has-actions="'.($has_actions ? '1' : '0').'">';
       echo "<td>{$exp}</td><td>{$ent}</td><td>{$nom}</td><td>{$usr}</td>";
       echo '<td><button class="guc-btn guc-btn-secondary guc-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
       echo '<td>';
@@ -223,7 +264,16 @@ final class GUC_Casos_Compact {
 
   public function guc_list_users(){
     $this->check_nonce(); global $wpdb;
-    $rows = $wpdb->get_results("SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) ORDER BY u.id DESC");
+    $include_id = intval($_POST['include_id'] ?? 0);
+    if ($include_id) {
+      $sql = $wpdb->prepare(
+        "SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) OR u.id=%d ORDER BY u.id DESC",
+        $include_id
+      );
+    } else {
+      $sql = "SELECT u.* FROM {$this->t_users} u WHERE NOT EXISTS (SELECT 1 FROM {$this->t_cases} c WHERE c.user_id=u.id) ORDER BY u.id DESC";
+    }
+    $rows = $wpdb->get_results($sql);
     $out = [];
     foreach($rows as $r){
       $out[] = ['id'=>intval($r->id),'username'=>$r->username,'entity'=>$r->entity,'expediente'=>$r->expediente];
@@ -376,18 +426,22 @@ final class GUC_Casos_Compact {
         $sit   = $this->html_esc($r->situacion);
         $mot   = $this->html_esc($r->motivo);
         $pdf   = ($pdf_col && !empty($r->$pdf_col)) ? esc_url($r->$pdf_col) : '';
-        echo '<tr data-row-id="'.intval($r->id).'">';
+        $row_id = intval($r->id);
+        $case_attr = ' data-case-id="'.intval($case_id).'"';
+        echo '<tr data-row-id="'.$row_id.'"'.$case_attr.'>';
         echo '<td>'.$i++.'</td><td>'.$sit.'</td><td>'.$fecha.'</td><td>'.$mot.'</td>';
         echo '<td class="guc-actions">';
-        if($pdf){
-          echo '<a class="guc-ico guc-ico-pdf" target="_blank" rel="noopener" href="'.$pdf.'" title="Ver PDF">📄</a>';
-          echo ' <button class="guc-ico guc-ico-replace guc-upload" data-section="'.esc_attr($section).'" title="Reemplazar PDF">⤴</button>';
-          echo ' <button class="guc-ico guc-ico-clear guc-clear-pdf" data-section="'.esc_attr($section).'" title="Quitar PDF">✕</button>';
-        }else{
-          echo '<button class="guc-ico guc-ico-upload guc-upload" data-section="'.esc_attr($section).'" title="Subir PDF">⤴</button>';
+        $has_pdf_attr = $pdf ? ' data-has-pdf="1"' : ' data-has-pdf="0"';
+        $pdf_btn_classes = 'guc-ico guc-ico-upload guc-upload'.($pdf ? ' has-pdf' : '');
+        $pdf_label = $pdf ? 'Reemplazar PDF' : 'Subir PDF';
+        $button = '<button type="button" class="'.esc_attr($pdf_btn_classes).'" data-section="'.esc_attr($section).'"'.$has_pdf_attr.' aria-label="'.esc_attr($pdf_label).'"';
+        if ($pdf) {
+          $button .= ' data-pdf-url="'.$pdf.'"';
         }
-        echo ' <button class="guc-ico guc-ico-edit guc-row-edit" data-section="'.esc_attr($section).'" title="Editar">✎</button>';
-        echo ' <button class="guc-ico guc-ico-del guc-row-del" data-section="'.esc_attr($section).'" title="Eliminar">🗑</button>';
+        $button .= '></button>';
+        echo $button;
+        echo ' <button type="button" class="guc-ico guc-ico-edit guc-row-edit" data-section="'.esc_attr($section).'" aria-label="Editar acción"></button>';
+        echo ' <button type="button" class="guc-ico guc-ico-del guc-row-del" data-section="'.esc_attr($section).'" aria-label="Eliminar acción"></button>';
         echo '</td></tr>';
       }
     }
