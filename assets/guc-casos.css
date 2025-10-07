@@ -1,0 +1,92 @@
+/* ===== base ===== */
+#guc-casos.guc-wrap{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#2b2b2b;}
+#guc-casos .guc-header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px;}
+#guc-casos .guc-title{font-weight:800;font-size:22px;margin:0;}
+
+/* ===== botones ===== */
+#guc-casos .guc-btn{border:0;border-radius:14px;padding:10px 16px;cursor:pointer;transition:.15s;box-shadow:0 2px 6px rgba(0,0,0,.08);font-weight:600;}
+#guc-casos .guc-btn-primary{background:#bfa27b;color:#fff;}
+#guc-casos .guc-btn-secondary{background:#ede6dc;color:#2b241d;}
+#guc-casos .guc-icon{display:inline-block;margin-right:6px;font-weight:900;}
+
+/* ===== tarjeta/tabla ===== */
+#guc-casos .guc-card{background:#fff;border:1px solid #ece7df;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06);padding:16px;}
+#guc-casos .guc-table{width:100%;border-collapse:separate;border-spacing:0;}
+#guc-casos .guc-table thead th{background:#f6f1ea;color:#2b241d;font-weight:700;padding:12px;border-bottom:1px solid #eadfce;text-align:left;}
+#guc-casos .guc-table td{padding:12px;border-bottom:1px solid #f1ebe2;color:#2b2b2b;}
+#guc-casos .guc-empty{color:#8a7a66;text-align:center;padding:16px;}
+
+/* ===== acciones ===== */
+#guc-casos .guc-actions .guc-act{border:0;border-radius:10px;padding:8px;cursor:pointer;margin-right:6px;}
+#guc-casos .guc-actions .guc-view{background:#9e9e9e;color:#fff;}
+#guc-casos .guc-actions .guc-edit{background:#ffa000;color:#2b241d;}
+#guc-casos .guc-actions .guc-del{background:#e53935;color:#fff;}
+#guc-casos .guc-pill{background:#4b3a31;color:#fff;border:0;border-radius:10px;padding:6px 10px;font-weight:700;}
+
+/* ===== modales (igual a lo tuyo) ===== */
+#guc-modal, #guc-modal-start{
+  position:fixed; inset:0; display:none; z-index:100000;
+  background:rgba(0,0,0,.28); -webkit-backdrop-filter:blur(1px); backdrop-filter:blur(1px);
+}
+#guc-modal.show, #guc-modal-start.show{display:flex;align-items:center;justify-content:center;}
+#guc-modal .guc-modal-dialog, #guc-modal-start .guc-modal-dialog{
+  position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(760px,calc(100% - 48px)); max-height:85vh; overflow:auto;
+  background:#fff; border-radius:20px; border:1px solid #eadfce; box-shadow:0 20px 40px rgba(0,0,0,.20); z-index:100001;
+}
+.guc-modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f0e7db;background:#3e2e25;color:#fff;}
+.guc-modal-header h3{margin:0;color:#fff;}
+.guc-modal-close{background:transparent;border:0;font-size:20px;cursor:pointer;color:#ffdfdf;}
+.guc-modal-body{padding:18px 20px;background:#fff;}
+.guc-modal-footer{padding:14px 20px;border-top:1px solid #f0e7db;display:flex;justify-content:flex-end;gap:10px;background:#fff;}
+
+/* ===== formulario ===== */
+.guc-field{margin-bottom:14px;}
+.guc-field label{display:block;margin-bottom:6px;color:#2b241d;font-weight:700;}
+.guc-field input[type=text], .guc-field textarea, .guc-field select{width:100%;padding:10px 12px;border:1px solid #e1d7c8;border-radius:12px;outline:0;background:#fff;}
+.guc-field textarea{resize:vertical;min-height:110px;}
+.guc-help{display:block;margin-top:6px;color:#8a7a66;}
+.guc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.guc-col{min-width:0;}
+@media (max-width:640px){.guc-row{grid-template-columns:1fr;}}
+
+/* sólo lectura */
+.guc-readonly{background:#fbf8f3;color:#6b5e50;}
+body.guc-no-scroll{overflow:hidden;}
+
+/* ===== subfilas y subtables ===== */
+#guc-casos .guc-subrow .guc-subrow-cell{ padding:.75rem 1rem; background:#fff; border-top:1px solid #e5e2dd; }
+#guc-casos .guc-accordion{ display:grid; gap:8px; }
+#guc-casos .guc-sec{ border:1px solid #e5e2dd; border-radius:8px; overflow:hidden; background:#faf9f7; }
+#guc-casos .guc-toggle{ width:100%; text-align:left; padding:10px 14px; font-weight:700; border:0; background:#f0ede8; cursor:pointer; display:flex; align-items:center; gap:8px; color:#3f3a34; transition:background .15s ease; }
+#guc-casos .guc-toggle:hover{ background:#e7e3dc; }
+#guc-casos .guc-caret{ display:inline-block; width:1em; }
+#guc-casos .guc-panel{ padding:12px 14px; background:#fff; }
+
+#guc-casos .guc-subtitle{ margin:8px 4px 10px; font-size:14px; font-weight:800; color:#3f3a34; }
+
+#guc-casos .guc-subtable{ width:100%; border-collapse:separate; border-spacing:0; }
+#guc-casos .guc-subtable thead th{ background:#f6f1ea; color:#2b241d; font-weight:700; padding:10px; border-bottom:1px solid #eadfce; text-align:left; }
+#guc-casos .guc-subtable td{ padding:10px; border-bottom:1px solid #f1ebe2; color:#2b2b2b; vertical-align:top; }
+#guc-casos .guc-subtable-footer{ margin-top:10px; display:flex; justify-content:flex-end; }
+
+/* estados */
+#guc-casos .guc-subtable .guc-empty{ color:#8a7a66; text-align:center; padding:14px; }
+
+
+/* === Compact restyle additions === */
+#guc-casos .guc-card{padding:12px;border-radius:14px}
+#guc-casos .guc-table thead th{padding:10px;font-size:13px}
+#guc-casos .guc-table td{padding:10px 12px}
+#guc-casos .guc-subrow .guc-subrow-cell{padding:8px 10px;background:#fbf8f3;border:1px solid #eadfce;border-radius:8px}
+#guc-casos .guc-accordion{gap:6px}
+#guc-casos .guc-sec{border-radius:8px}
+#guc-casos .guc-toggle{padding:8px 10px;height:36px;font-size:13px}
+#guc-casos .guc-panel{padding:8px 10px}
+#guc-casos .guc-subtable.guc-subtable-compact thead th{padding:8px 10px;font-size:12px}
+#guc-casos .guc-subtable.guc-subtable-compact td{padding:8px 10px;font-size:13px}
+#guc-casos .guc-subtable-footer{margin-top:6px}
+/* icon action buttons */
+.guc-ico{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid #eadfce;border-radius:8px;background:#fff;cursor:pointer;margin-right:6px}
+.guc-ico:hover{background:#f6f1ea}
+.guc-ico:disabled{opacity:.6;cursor:not-allowed}
