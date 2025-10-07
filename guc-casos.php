@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.2)
+ * Plugin Name: GUC Casos (v1.6.3)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.2
+ * Version:     1.6.3
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.2';
+  const VERSION = '1.6.3';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -31,16 +31,33 @@ final class GUC_Casos_Compact {
     $this->t_sec_general  = $wpdb->prefix.'guc_secretaria_general_actions';
 
     add_action('init', [$this,'assets']);
+    add_action('plugins_loaded', [$this,'maybe_upgrade_schema']);
     add_shortcode('gestion_casos', [$this,'shortcode']);
 
     $ax = [
       'guc_list_cases','guc_list_users','guc_create_case','guc_get_case','guc_update_case','guc_delete_case',
+      'guc_update_case_status',
       'guc_create_case_event','guc_secretaria_title','guc_list_section','guc_create_section_action',
       'guc_get_section_row','guc_update_section_row','guc_delete_section_row','guc_upload_pdf','guc_clear_pdf'
     ];
     foreach($ax as $a){
       add_action("wp_ajax_$a", [$this,$a]);
       add_action("wp_ajax_nopriv_$a", [$this,$a]);
+    }
+  }
+
+  public function maybe_upgrade_schema(){
+    global $wpdb;
+    $table = $this->t_cases;
+    if (!$table) return;
+    $columns = $wpdb->get_col("SHOW COLUMNS FROM `$table`");
+    if (!is_array($columns)) return;
+
+    if (!in_array('estado', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado` varchar(50) DEFAULT '' AFTER `descripcion`");
+    }
+    if (!in_array('estado_fecha', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado_fecha` datetime NULL DEFAULT NULL AFTER `estado`");
     }
   }
 
@@ -200,8 +217,44 @@ final class GUC_Casos_Compact {
           <button type="button" id="guc-cancel-start" class="guc-btn">Cancelar</button>
           <button type="button" id="guc-save-start" class="guc-btn guc-btn-primary">Guardar</button>
         </div>
+        </div>
       </div>
     </div>
+
+    <!-- Modal estado del caso -->
+    <div id="guc-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="guc-modal-dialog">
+        <div class="guc-modal-header">
+          <h3>Estado del caso</h3>
+          <button type="button" class="guc-modal-close">✕</button>
+        </div>
+        <div class="guc-modal-body">
+          <form id="guc-form-status">
+            <input type="hidden" name="case_id">
+            <div class="guc-modal-status-grid">
+              <div class="guc-field">
+                <label>Estado</label>
+                <select name="estado" required>
+                  <option value="">-Selecciona un estado-</option>
+                  <option value="Inicio">Inicio</option>
+                  <option value="En proceso">En proceso</option>
+                  <option value="Terminado">Terminado</option>
+                </select>
+              </div>
+              <div class="guc-field">
+                <label>Fecha y Hora</label>
+                <input type="datetime-local" name="estado_fecha">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="guc-modal-footer">
+          <button type="button" id="guc-cancel-status" class="guc-btn">Cancelar</button>
+          <button type="button" id="guc-save-status" class="guc-btn guc-btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+
     <?php
     return ob_get_clean();
   }
@@ -251,11 +304,12 @@ final class GUC_Casos_Compact {
       echo "<td>{$exp}</td><td>{$ent}</td><td>{$nom}</td><td>{$usr}</td>";
       echo '<td><button class="guc-btn guc-btn-secondary guc-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
       echo '<td>';
-      echo ' <div class="guc-actions" style="display:inline-block">';
-      echo '   <button class="guc-act guc-view" data-id="'.intval($r->id).'">👁</button>';
-      echo '   <button class="guc-act guc-edit" data-id="'.intval($r->id).'">✎</button>';
-      echo '   <button class="guc-act guc-del"  data-id="'.intval($r->id).'" onclick="return confirm(\'¿Eliminar este caso?\')">🗑</button>';
-      echo ' </div>';
+      echo '  <div class="guc-actions">';
+      echo '    <button type="button" class="guc-act guc-status" data-id="'.intval($r->id).'" aria-label="Actualizar estado del caso"><span class="guc-ico guc-ico-gear" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="guc-act guc-view" data-id="'.intval($r->id).'" aria-label="Ver caso"><span class="guc-ico guc-ico-view" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="guc-act guc-edit" data-id="'.intval($r->id).'" aria-label="Editar caso"><span class="guc-ico guc-ico-edit" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="guc-act guc-del"  data-id="'.intval($r->id).'" aria-label="Eliminar caso" onclick="return confirm(\'¿Eliminar este caso?\')"><span class="guc-ico guc-ico-del" aria-hidden="true"></span></button>';
+      echo '  </div>';
       echo '</td></tr>';
     }
     $html = ob_get_clean();
@@ -302,6 +356,8 @@ final class GUC_Casos_Compact {
       'entidad'      => $u->entity,
       'objeto'       => sanitize_text_field($data['objeto'] ?? ''),
       'descripcion'  => sanitize_textarea_field($data['descripcion'] ?? ''),
+      'estado'       => '',
+      'estado_fecha' => null,
       'user_id'      => $user_id,
       'username'     => $u->username,
       'case_type'    => sanitize_text_field($data['case_type'] ?? ''),
@@ -350,6 +406,41 @@ final class GUC_Casos_Compact {
     $ok = $wpdb->update($this->t_cases,$upd,['id'=>$id]);
     if($ok===false) wp_send_json_error(['message'=>'No se pudo actualizar']);
     wp_send_json_success(['id'=>$id]);
+  }
+
+  public function guc_update_case_status(){
+    $this->check_nonce(); global $wpdb;
+    $data = isset($_POST['data']) ? (array) $_POST['data'] : [];
+    $id = intval($data['case_id'] ?? 0);
+    if(!$id) wp_send_json_error(['message'=>'ID inválido']);
+
+    $estado = sanitize_text_field($data['estado'] ?? '');
+    $allowed = ['Inicio','En proceso','Terminado'];
+    if(!$estado || !in_array($estado, $allowed, true)){
+      wp_send_json_error(['message'=>'Selecciona un estado válido']);
+    }
+
+    $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->t_cases} WHERE id=%d", $id));
+    if(!$exists){
+      wp_send_json_error(['message'=>'Caso no encontrado']);
+    }
+
+    $fecha_in = sanitize_text_field($data['estado_fecha'] ?? '');
+    $fecha_db = null;
+    if($fecha_in){
+      $candidate = str_replace('T',' ',$fecha_in);
+      $ts = strtotime($candidate);
+      if($ts){
+        $fecha_db = date('Y-m-d H:i:s', $ts);
+      }
+    }
+
+    $upd = ['estado'=>$estado, 'estado_fecha'=>$fecha_db];
+
+    $ok = $wpdb->update($this->t_cases, $upd, ['id'=>$id]);
+    if($ok===false) wp_send_json_error(['message'=>'No se pudo guardar el estado']);
+
+    wp_send_json_success(['id'=>$id,'estado'=>$estado,'estado_fecha'=>$upd['estado_fecha']]);
   }
 
   public function guc_delete_case(){

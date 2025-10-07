@@ -196,6 +196,63 @@
       closeStart();
     });
 
+    // Modal estado del caso
+    let $statusModal = $('#guc-modal-status');
+    let $statusForm  = $('#guc-form-status');
+    const $statusSave   = $('#guc-save-status');
+    const $statusCancel = $('#guc-cancel-status');
+    let statusDirty = false;
+
+    if ($statusModal.length && $statusModal.parent()[0] !== document.body) {
+      $statusModal = $statusModal.detach().appendTo('body');
+      $statusForm = $('#guc-form-status');
+    }
+    if ($statusModal.length) {
+      $statusModal.removeClass('show').attr('aria-hidden','true').hide();
+    }
+
+    function resetStatusModal(){
+      statusDirty = false;
+      if ($statusForm && $statusForm[0]) {
+        $statusForm[0].reset();
+      }
+    }
+
+    function closeStatus(force){
+      if (!$statusModal.length) return;
+      if (force && typeof force.preventDefault === 'function') {
+        force.preventDefault();
+        force = false;
+      }
+      const shouldForce = force === true;
+      if (!shouldForce && statusDirty){
+        if (!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
+      }
+      $statusModal.removeClass('show').attr('aria-hidden','true').hide();
+      if (!$modal.hasClass('show') && !$startModal.hasClass('show')) {
+        $('body').removeClass('guc-no-scroll');
+      }
+      resetStatusModal();
+    }
+
+    function openStatus(){
+      if (!$statusModal.length) return;
+      statusDirty = false;
+      $statusModal.addClass('show').attr('aria-hidden','false').show();
+      $('body').addClass('guc-no-scroll');
+    }
+
+    if ($statusModal.length){
+      $statusModal.find('.guc-modal-close').off('click').on('click', closeStatus);
+      $statusCancel.on('click', closeStatus);
+      $statusModal.on('mousedown', function(e){
+        const $dialog = $statusModal.find('.guc-modal-dialog');
+        if ($dialog.is(e.target) || $dialog.has(e.target).length) return;
+        closeStatus();
+      });
+      $statusForm.on('input change', 'input, select', function(){ statusDirty = true; });
+    }
+
     /* =========================
      *  Modal general (casos)
      * ========================= */
@@ -465,7 +522,11 @@
     $close.on('click', closeModal);
 
     $(document).on('keydown.gucCasos', function(e){
-      if (e.key === 'Escape' && ($modal.hasClass('show') || $startModal.hasClass('show'))) { closeModal(); closeStart(); }
+      if (e.key === 'Escape') {
+        if ($statusModal.length && $statusModal.hasClass('show')) { closeStatus(); }
+        if ($startModal.hasClass('show')) { closeStart(); }
+        if ($modal.hasClass('show')) { closeModal(); }
+      }
     });
     $modal.on('mousedown', function(e){
       const $dialog = $('.guc-modal-dialog').first();
@@ -500,6 +561,53 @@
         $save.prop('disabled', false); alert('Error de conexión');
       });
     });
+
+    // estado del caso
+    $tbody.on('click', '.guc-status', function(){
+      if (!$statusModal.length) return;
+      const id = $(this).data('id');
+      if (!id) return;
+      $.post(GUC_CASOS.ajax, { action:'guc_get_case', nonce:GUC_CASOS.nonce, id }, function(res){
+        if (!(res && res.success)) { alert('No se pudo cargar el caso'); return; }
+        const d = res.data || {};
+        resetStatusModal();
+        if ($statusForm.length) {
+          $statusForm.find('[name=case_id]').val(d.id || '');
+          $statusForm.find('[name=estado]').val(d.estado || '');
+          const fecha = d.estado_fecha || '';
+          if (fecha) {
+            const iso = fecha.replace(' ', 'T').slice(0,16);
+            $statusForm.find('[name=estado_fecha]').val(iso);
+          }
+        }
+        statusDirty = false;
+        openStatus();
+      }, 'json').fail(function(){ alert('Error de conexión'); });
+    });
+
+    if ($statusSave.length){
+      $statusSave.on('click', function(){
+        if (!$statusForm.length) return;
+        const data = Object.fromEntries(new FormData($statusForm[0]).entries());
+        if (!data.case_id) { alert('Caso inválido'); return; }
+        if (!data.estado) { alert('Selecciona un estado'); return; }
+        $statusSave.prop('disabled', true);
+        $.post(GUC_CASOS.ajax, { action:'guc_update_case_status', nonce:GUC_CASOS.nonce, data }, function(res){
+          $statusSave.prop('disabled', false);
+          if (res && res.success) {
+            statusDirty = false;
+            closeStatus(true);
+            loadTable();
+          } else {
+            const message = (res && res.data && res.data.message) ? res.data.message : 'No se pudo actualizar el estado';
+            alert(message);
+          }
+        }, 'json').fail(function(){
+          $statusSave.prop('disabled', false);
+          alert('Error de conexión');
+        });
+      });
+    }
 
     // ver/editar/eliminar
     $tbody.on('click', '.guc-view, .guc-edit, .guc-del', function(){
