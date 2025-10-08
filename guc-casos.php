@@ -1,14 +1,14 @@
 
 <?php
 /**
- * Plugin Name: GUC Casos (v1.6.8)
+ * Plugin Name: GUC Casos (v1.6.7)
  * Description: Gestión de Casos con subtables por sección y columna ACCIONES. case_type inmutable y un caso por usuario.
- * Version:     1.6.8
+ * Version:     1.6.7
  */
 if (!defined('ABSPATH')) exit;
 
 final class GUC_Casos_Compact {
-  const VERSION = '1.6.8';
+  const VERSION = '1.6.7';
   private static $inst = null;
   public static function instance(){ return self::$inst ?: self::$inst = new self(); }
 
@@ -89,42 +89,42 @@ final class GUC_Casos_Compact {
   function shortcode(){
     wp_enqueue_style('guc-casos'); wp_enqueue_script('guc-casos');
     ob_start(); ?>
-    <div id="guc-casos-app" class="guc-wrap">
-      <div class="guc-header">
-        <h2 class="guc-title">Gestión de Casos</h2>
-        <div class="guc-header-controls">
-          <form id="guc-casos-search-form" class="guc-search" role="search">
-            <label class="guc-visually-hidden" for="guc-casos-search-expediente">Buscar por expediente</label>
-            <input type="search" id="guc-casos-search-expediente" name="expediente" placeholder="N° Expediente" autocomplete="off">
-            <button type="submit" class="guc-search-btn" aria-label="Buscar expediente">
-              <span class="guc-ico-mini guc-ico-search" aria-hidden="true"></span>
+    <div id="gcas-casos-app" class="gcas-wrap">
+      <div class="gcas-header">
+        <h2 class="gcas-title">Gestión de Casos</h2>
+        <div class="gcas-header-controls">
+          <form id="gcas-casos-search-form" class="gcas-search" role="search">
+            <label class="gcas-visually-hidden" for="gcas-casos-search-expediente">Buscar por expediente</label>
+            <input type="search" id="gcas-casos-search-expediente" name="expediente" placeholder="N° Expediente" autocomplete="off">
+            <button type="submit" class="gcas-search-btn" aria-label="Buscar expediente">
+              <span class="gcas-ico-mini gcas-ico-search" aria-hidden="true"></span>
             </button>
           </form>
-          <div class="guc-filter" data-filter-wrapper data-filter-active="0">
-            <button type="button" id="guc-casos-filter-toggle" class="guc-filter-toggle" aria-haspopup="true" aria-expanded="false">
-              <span class="guc-ico-mini guc-ico-filter" aria-hidden="true"></span>
-              <span class="guc-filter-text">Todos</span>
+          <div class="gcas-filter" data-filter-wrapper data-filter-active="0">
+            <button type="button" id="gcas-casos-filter-toggle" class="gcas-filter-toggle" aria-haspopup="true" aria-expanded="false">
+              <span class="gcas-ico-mini gcas-ico-filter" aria-hidden="true"></span>
+              <span class="gcas-filter-text">Todos</span>
             </button>
-            <div id="guc-casos-filter-menu" class="guc-filter-menu" role="menu" hidden>
+            <div id="gcas-casos-filter-menu" class="gcas-filter-menu" role="menu" hidden>
               <button type="button" data-filter="" role="menuitemradio" aria-checked="true">
-                <span class="guc-filter-check" aria-hidden="true"></span>
-                <span class="guc-filter-label">Todos</span>
+                <span class="gcas-filter-check" aria-hidden="true"></span>
+                <span class="gcas-filter-label">Todos</span>
               </button>
               <button type="button" data-filter="TAR" role="menuitemradio" aria-checked="false">
-                <span class="guc-filter-check" aria-hidden="true"></span>
-                <span class="guc-filter-label">TAR</span>
+                <span class="gcas-filter-check" aria-hidden="true"></span>
+                <span class="gcas-filter-label">TAR</span>
               </button>
               <button type="button" data-filter="JPRD" role="menuitemradio" aria-checked="false">
-                <span class="guc-filter-check" aria-hidden="true"></span>
-                <span class="guc-filter-label">JPRD</span>
+                <span class="gcas-filter-check" aria-hidden="true"></span>
+                <span class="gcas-filter-label">JPRD</span>
               </button>
             </div>
           </div>
-          <button id="guc-casos-open-modal" class="guc-btn guc-btn-primary"><span class="guc-icon">＋</span>Nuevo caso</button>
+          <button id="gcas-casos-open-modal" class="gcas-btn gcas-btn-primary"><span class="gcas-icon">＋</span>Nuevo caso</button>
         </div>
       </div>
-      <div class="guc-card">
-        <table class="guc-table">
+      <div class="gcas-card">
+        <table class="gcas-table">
           <thead><tr>
             <th>EXPEDIENTE</th>
             <th>ENTIDAD</th>
@@ -133,28 +133,28 @@ final class GUC_Casos_Compact {
             <th>HISTORIAL</th>
             <th>ACCIONES</th>
           </tr></thead>
-          <tbody id="guc-casos-table"><tr><td colspan="6" class="guc-empty">Cargando…</td></tr></tbody>
+          <tbody id="gcas-casos-table"><tr><td colspan="6" class="gcas-empty">Cargando…</td></tr></tbody>
         </table>
       </div>
     </div>
 
     <!-- Modal crear/editar -->
-    <div id="guc-casos-app-modal" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="guc-modal-dialog">
-        <div class="guc-modal-header">
-          <h3 id="guc-casos-modal-title">Crear nuevo caso</h3>
-          <button type="button" class="guc-modal-close">✕</button>
+    <div id="gcas-casos-app-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="gcas-modal-dialog">
+        <div class="gcas-modal-header">
+          <h3 id="gcas-casos-modal-title">Crear nuevo caso</h3>
+          <button type="button" class="gcas-modal-close">✕</button>
         </div>
-        <div class="guc-modal-body">
-          <form id="guc-casos-form-caso">
+        <div class="gcas-modal-body">
+          <form id="gcas-casos-form-caso">
             <input type="hidden" name="id">
-            <div class="guc-row">
-              <div class="guc-col guc-field">
+            <div class="gcas-row">
+              <div class="gcas-col gcas-field">
                 <label>Asignar Usuario</label>
-                <select id="guc-casos-user-select" name="user_id" required></select>
-                <span class="guc-help">Solo aparecen usuarios sin caso.</span>
+                <select id="gcas-casos-user-select" name="user_id" required></select>
+                <span class="gcas-help">Solo aparecen usuarios sin caso.</span>
               </div>
-              <div class="guc-col guc-field">
+              <div class="gcas-col gcas-field">
                 <label>Tipo de Caso</label>
                 <select name="case_type" required>
                   <option value="">— Selecciona —</option>
@@ -163,105 +163,105 @@ final class GUC_Casos_Compact {
                 </select>
               </div>
             </div>
-            <div class="guc-row">
-              <div class="guc-col guc-field">
+            <div class="gcas-row">
+              <div class="gcas-col gcas-field">
                 <label>Expediente</label>
                 <input type="text" name="expediente" required>
               </div>
-              <div class="guc-col guc-field">
+              <div class="gcas-col gcas-field">
                 <label>Entidad Convocante</label>
                 <input type="text" name="entidad" required>
               </div>
             </div>
-            <div class="guc-row">
-              <div class="guc-col guc-field">
+            <div class="gcas-row">
+              <div class="gcas-col gcas-field">
                 <label>Nomenclatura</label>
                 <input type="text" name="nomenclatura">
               </div>
-              <div class="guc-col guc-field">
+              <div class="gcas-col gcas-field">
                 <label>N° de Convocatoria</label>
                 <input type="text" name="convocatoria">
               </div>
             </div>
-            <div class="guc-row">
-              <div class="guc-col guc-field">
+            <div class="gcas-row">
+              <div class="gcas-col gcas-field">
                 <label>Objeto de Contratación</label>
                 <input type="text" name="objeto">
               </div>
-              <div class="guc-col"></div>
+              <div class="gcas-col"></div>
             </div>
-            <div class="guc-field">
+            <div class="gcas-field">
               <label>Descripción del Objeto</label>
               <textarea name="descripcion"></textarea>
             </div>
           </form>
         </div>
-        <div class="guc-modal-footer">
-          <button type="button" id="guc-casos-cancel" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-casos-save"   class="guc-btn guc-btn-primary">Guardar</button>
+        <div class="gcas-modal-footer">
+          <button type="button" id="gcas-casos-cancel" class="gcas-btn">Cancelar</button>
+          <button type="button" id="gcas-casos-save"   class="gcas-btn gcas-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
 
     <!-- Modal iniciar/agregar acción -->
-    <div id="guc-casos-app-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="guc-modal-dialog">
-        <div class="guc-modal-header">
+    <div id="gcas-casos-app-modal-start" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="gcas-modal-dialog">
+        <div class="gcas-modal-header">
           <h3>Registrar acción</h3>
-          <button type="button" class="guc-modal-close">✕</button>
+          <button type="button" class="gcas-modal-close">✕</button>
         </div>
-        <div class="guc-modal-body">
-          <form id="guc-casos-form-inicio">
+        <div class="gcas-modal-body">
+          <form id="gcas-casos-form-inicio">
             <input type="hidden" name="case_id">
-            <div class="guc-row">
-              <div class="guc-col guc-field">
+            <div class="gcas-row">
+              <div class="gcas-col gcas-field">
                 <label>Situación</label>
                 <input type="text" name="situacion" required>
               </div>
-              <div class="guc-col guc-field">
+              <div class="gcas-col gcas-field">
                 <label>Fecha y Hora</label>
                 <input type="datetime-local" name="fecha" required>
               </div>
             </div>
-            <div class="guc-field">
+            <div class="gcas-field">
               <label>Motivo</label>
               <textarea name="motivo" required></textarea>
             </div>
-            <div class="guc-field guc-field-pdf guc-hidden" id="guc-casos-action-pdf" aria-hidden="true" data-has-pdf="0">
+            <div class="gcas-field gcas-field-pdf gcas-hidden" id="gcas-casos-action-pdf" aria-hidden="true" data-has-pdf="0">
               <label>PDF</label>
-              <div class="guc-pdf-card">
-                <div class="guc-pdf-meta">
-                  <span class="guc-pdf-name" id="guc-casos-action-pdf-name">Sin archivo adjunto</span>
-                  <a href="#" target="_blank" rel="noopener" class="guc-pdf-link" id="guc-casos-action-pdf-open" hidden>Ver documento</a>
+              <div class="gcas-pdf-card">
+                <div class="gcas-pdf-meta">
+                  <span class="gcas-pdf-name" id="gcas-casos-action-pdf-name">Sin archivo adjunto</span>
+                  <a href="#" target="_blank" rel="noopener" class="gcas-pdf-link" id="gcas-casos-action-pdf-open" hidden>Ver documento</a>
                 </div>
-                <div class="guc-pdf-buttons">
-                  <button type="button" class="guc-ico guc-ico-upload" id="guc-casos-action-pdf-upload" aria-label="Subir o reemplazar PDF"></button>
-                  <button type="button" class="guc-ico guc-ico-del" id="guc-casos-action-pdf-delete" aria-label="Eliminar PDF" disabled></button>
+                <div class="gcas-pdf-buttons">
+                  <button type="button" class="gcas-ico gcas-ico-upload" id="gcas-casos-action-pdf-upload" aria-label="Subir o reemplazar PDF"></button>
+                  <button type="button" class="gcas-ico gcas-ico-del" id="gcas-casos-action-pdf-delete" aria-label="Eliminar PDF" disabled></button>
                 </div>
               </div>
             </div>
           </form>
         </div>
-        <div class="guc-modal-footer">
-          <button type="button" id="guc-casos-cancel-start" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-casos-save-start" class="guc-btn guc-btn-primary">Guardar</button>
+        <div class="gcas-modal-footer">
+          <button type="button" id="gcas-casos-cancel-start" class="gcas-btn">Cancelar</button>
+          <button type="button" id="gcas-casos-save-start" class="gcas-btn gcas-btn-primary">Guardar</button>
         </div>
         </div>
       </div>
     </div>
 
     <!-- Modal estado del caso -->
-    <div id="guc-casos-app-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
-      <div class="guc-modal-dialog">
-        <div class="guc-modal-header">
+    <div id="gcas-casos-app-modal-status" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="gcas-modal-dialog">
+        <div class="gcas-modal-header">
           <h3>Estado del caso</h3>
-          <button type="button" class="guc-modal-close">✕</button>
+          <button type="button" class="gcas-modal-close">✕</button>
         </div>
-        <div class="guc-modal-body">
-          <form id="guc-casos-form-status">
+        <div class="gcas-modal-body">
+          <form id="gcas-casos-form-status">
             <input type="hidden" name="case_id">
-            <div class="guc-modal-status-grid">
-              <div class="guc-field">
+            <div class="gcas-modal-status-grid">
+              <div class="gcas-field">
                 <label>Estado</label>
                 <select name="estado" required>
                   <option value="">-Selecciona un estado-</option>
@@ -270,16 +270,16 @@ final class GUC_Casos_Compact {
                   <option value="Terminado">Terminado</option>
                 </select>
               </div>
-              <div class="guc-field">
+              <div class="gcas-field">
                 <label>Fecha y Hora</label>
                 <input type="datetime-local" name="estado_fecha">
               </div>
             </div>
           </form>
         </div>
-        <div class="guc-modal-footer">
-          <button type="button" id="guc-casos-cancel-status" class="guc-btn">Cancelar</button>
-          <button type="button" id="guc-casos-save-status" class="guc-btn guc-btn-primary">Guardar</button>
+        <div class="gcas-modal-footer">
+          <button type="button" id="gcas-casos-cancel-status" class="gcas-btn">Cancelar</button>
+          <button type="button" id="gcas-casos-save-status" class="gcas-btn gcas-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -346,7 +346,7 @@ final class GUC_Casos_Compact {
 
     $rows = $wpdb->get_results($sql);
     ob_start();
-    if (!$rows){ echo '<tr><td colspan="6" class="guc-empty">Sin casos.</td></tr>'; }
+    if (!$rows){ echo '<tr><td colspan="6" class="gcas-empty">Sin casos.</td></tr>'; }
     else foreach($rows as $r){
       $exp = $this->html_esc($r->expediente);
       $ent = $this->html_esc($r->entidad);
@@ -359,13 +359,13 @@ final class GUC_Casos_Compact {
       $match_attr = $match ? ' data-search-match="1"' : '';
       echo '<tr data-id="'.intval($r->id).'" data-has-actions="'.($has_actions ? '1' : '0').'"'.$match_attr.'>';
       echo "<td>{$exp}</td><td>{$ent}</td><td>{$nom}</td><td>{$usr}</td>";
-      echo '<td><button class="guc-btn guc-btn-secondary guc-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
+      echo '<td><button class="gcas-btn gcas-btn-secondary gcas-start" data-id="'.intval($r->id).'">'.$hist_btn.'</button></td>';
       echo '<td>';
-      echo '  <div class="guc-actions">';
-      echo '    <button type="button" class="guc-act guc-status" data-id="'.intval($r->id).'" aria-label="Actualizar estado del caso"><span class="guc-ico guc-ico-gear" aria-hidden="true"></span></button>';
-      echo '    <button type="button" class="guc-act guc-view" data-id="'.intval($r->id).'" aria-label="Ver caso"><span class="guc-ico guc-ico-view" aria-hidden="true"></span></button>';
-      echo '    <button type="button" class="guc-act guc-edit" data-id="'.intval($r->id).'" aria-label="Editar caso"><span class="guc-ico guc-ico-edit" aria-hidden="true"></span></button>';
-      echo '    <button type="button" class="guc-act guc-del"  data-id="'.intval($r->id).'" aria-label="Eliminar caso" onclick="return confirm(\'¿Eliminar este caso?\')"><span class="guc-ico guc-ico-del" aria-hidden="true"></span></button>';
+      echo '  <div class="gcas-actions">';
+      echo '    <button type="button" class="gcas-act gcas-status" data-id="'.intval($r->id).'" aria-label="Actualizar estado del caso"><span class="gcas-ico gcas-ico-gear" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="gcas-act gcas-view" data-id="'.intval($r->id).'" aria-label="Ver caso"><span class="gcas-ico gcas-ico-view" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="gcas-act gcas-edit" data-id="'.intval($r->id).'" aria-label="Editar caso"><span class="gcas-ico gcas-ico-edit" aria-hidden="true"></span></button>';
+      echo '    <button type="button" class="gcas-act gcas-del"  data-id="'.intval($r->id).'" aria-label="Eliminar caso" onclick="return confirm(\'¿Eliminar este caso?\')"><span class="gcas-ico gcas-ico-del" aria-hidden="true"></span></button>';
       echo '  </div>';
       echo '</td></tr>';
     }
@@ -561,11 +561,11 @@ final class GUC_Casos_Compact {
 
     $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM `$table` WHERE case_id=%d ORDER BY id DESC",$case_id));
     ob_start();
-    echo '<table class="guc-subtable guc-subtable-compact"><thead><tr>';
+    echo '<table class="gcas-subtable gcas-subtable-compact"><thead><tr>';
     echo '<th style="width:56px">NRO</th><th>SITUACIÓN</th><th>FECHA Y HORA</th><th>MOTIVO</th><th style="width:210px">ACCIONES</th>';
     echo '</tr></thead><tbody>';
     if(!$rows){
-      echo '<tr><td colspan="5" class="guc-empty">Sin registros.</td></tr>';
+      echo '<tr><td colspan="5" class="gcas-empty">Sin registros.</td></tr>';
     } else {
       $i=1;
       $pdf_col = $this->pdf_column_for($table);
@@ -578,9 +578,9 @@ final class GUC_Casos_Compact {
         $case_attr = ' data-case-id="'.intval($case_id).'"';
         echo '<tr data-row-id="'.$row_id.'"'.$case_attr.'>';
         echo '<td>'.$i++.'</td><td>'.$sit.'</td><td>'.$fecha.'</td><td>'.$mot.'</td>';
-        echo '<td class="guc-actions">';
+        echo '<td class="gcas-actions">';
         $has_pdf_attr = $pdf ? ' data-has-pdf="1"' : ' data-has-pdf="0"';
-        $pdf_btn_classes = 'guc-ico guc-ico-upload guc-upload'.($pdf ? ' has-pdf' : '');
+        $pdf_btn_classes = 'gcas-ico gcas-ico-upload gcas-upload'.($pdf ? ' has-pdf' : '');
         $pdf_label = $pdf ? 'Reemplazar PDF' : 'Subir PDF';
         $button = '<button type="button" class="'.esc_attr($pdf_btn_classes).'" data-section="'.esc_attr($section).'"'.$has_pdf_attr.' aria-label="'.esc_attr($pdf_label).'"';
         if ($pdf) {
@@ -588,13 +588,13 @@ final class GUC_Casos_Compact {
         }
         $button .= '></button>';
         echo $button;
-        echo ' <button type="button" class="guc-ico guc-ico-edit guc-row-edit" data-section="'.esc_attr($section).'" aria-label="Editar acción"></button>';
-        echo ' <button type="button" class="guc-ico guc-ico-del guc-row-del" data-section="'.esc_attr($section).'" aria-label="Eliminar acción"></button>';
+        echo ' <button type="button" class="gcas-ico gcas-ico-edit gcas-row-edit" data-section="'.esc_attr($section).'" aria-label="Editar acción"></button>';
+        echo ' <button type="button" class="gcas-ico gcas-ico-del gcas-row-del" data-section="'.esc_attr($section).'" aria-label="Eliminar acción"></button>';
         echo '</td></tr>';
       }
     }
     echo '</tbody></table>';
-    echo '<div class="guc-subtable-footer"><button class="guc-btn guc-btn-primary guc-add-action" data-section="'.esc_attr($section).'" data-case-id="'.intval($case_id).'">Agregar acción</button></div>';
+    echo '<div class="gcas-subtable-footer"><button class="gcas-btn gcas-btn-primary gcas-add-action" data-section="'.esc_attr($section).'" data-case-id="'.intval($case_id).'">Agregar acción</button></div>';
     $html = ob_get_clean();
     wp_send_json_success(['html'=>$html]);
   }

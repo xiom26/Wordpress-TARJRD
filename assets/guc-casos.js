@@ -4,19 +4,19 @@
     /* =========================
      *  Referencias base (UI)
      * ========================= */
-    const $root  = $('#guc-casos-app');
+    const $root  = $('#gcas-casos-app');
     if (!$root.length) return;
 
-    let $modal = $('#guc-casos-app-modal');               // modal crear/editar/ver
-    const $open  = $root.find('#guc-casos-open-modal');
-    const $form  = $('#guc-casos-form-caso');
-    const $save  = $('#guc-casos-save');
-    const $user  = $('#guc-casos-user-select');
-    const $tbody = $root.find('#guc-casos-table');
-    const $searchForm   = $root.find('#guc-casos-search-form');
-    const $searchInput  = $root.find('#guc-casos-search-expediente');
-    const $filterToggle = $root.find('#guc-casos-filter-toggle');
-    const $filterMenu   = $root.find('#guc-casos-filter-menu');
+    let $modal = $('#gcas-casos-app-modal');               // modal crear/editar/ver
+    const $open  = $root.find('#gcas-casos-open-modal');
+    const $form  = $('#gcas-casos-form-caso');
+    const $save  = $('#gcas-casos-save');
+    const $user  = $('#gcas-casos-user-select');
+    const $tbody = $root.find('#gcas-casos-table');
+    const $searchForm   = $root.find('#gcas-casos-search-form');
+    const $searchInput  = $root.find('#gcas-casos-search-expediente');
+    const $filterToggle = $root.find('#gcas-casos-filter-toggle');
+    const $filterMenu   = $root.find('#gcas-casos-filter-menu');
     const $filterWrapper= $root.find('[data-filter-wrapper]');
 
     let currentSearch = '';
@@ -35,7 +35,7 @@
         if (currentFilter === 'TAR') label = 'TAR';
         else if (currentFilter === 'JPRD') label = 'JPRD';
         $filterToggle.attr('data-filter-value', currentFilter || '');
-        var $label = $filterToggle.find('.guc-filter-text');
+        var $label = $filterToggle.find('.gcas-filter-text');
         if ($label.length) { $label.text(label); }
       }
       if ($filterWrapper.length) {
@@ -54,14 +54,14 @@
     function handleFilterDocClick(e){
       if (!$filterMenu.length) return;
       var $target = $(e.target);
-      if ($target.closest('#guc-casos-app [data-filter-wrapper]').length) return;
+      if ($target.closest('#gcas-casos-app [data-filter-wrapper]').length) return;
       closeFilterMenu();
     }
 
     function handleFilterFocus(e){
       if (!filterMenuOpen) return;
       var $target = $(e.target);
-      if ($target.closest('#guc-casos-app [data-filter-wrapper]').length) return;
+      if ($target.closest('#gcas-casos-app [data-filter-wrapper]').length) return;
       closeFilterMenu();
     }
 
@@ -81,9 +81,9 @@
       $filterMenu.removeAttr('hidden');
       setTimeout(function(){
         $(document)
-          .on('click.gucFilter', handleFilterDocClick)
-          .on('focusin.gucFilter', handleFilterFocus)
-          .on('keydown.gucFilter', handleFilterKeydown);
+          .on('click.gcasFilter', handleFilterDocClick)
+          .on('focusin.gcasFilter', handleFilterFocus)
+          .on('keydown.gcasFilter', handleFilterKeydown);
       }, 0);
       setTimeout(function(){
         if (!$filterMenu.length) return;
@@ -104,7 +104,7 @@
       $filterToggle.attr('aria-expanded','false');
       if ($filterWrapper.length) $filterWrapper.removeClass('is-open');
       $filterMenu.attr('hidden','hidden');
-      $(document).off('.gucFilter');
+      $(document).off('.gcasFilter');
       if (force === true || !wasOpen) return;
       if ($filterToggle.length) {
         $filterToggle.trigger('blur');
@@ -182,18 +182,18 @@
     if ($modal.length && $modal.parent()[0] !== document.body) {
       $modal = $modal.detach().appendTo('body');
     }
-    const $close = $modal.find('.guc-modal-close, #guc-casos-cancel');
+    const $close = $modal.find('.gcas-modal-close, #gcas-casos-cancel');
 
     // Modal "Inicio / Acción"
-    let $startModal = $('#guc-casos-app-modal-start');
-    let $startForm  = $('#guc-casos-form-inicio');
-    const $startSave   = $('#guc-casos-save-start');
-    const $startCancel = $('#guc-casos-cancel-start');
-    const $pdfField    = $('#guc-casos-action-pdf');
-    const $pdfName     = $('#guc-casos-action-pdf-name');
-    const $pdfLink     = $('#guc-casos-action-pdf-open');
-    const $pdfUploadBtn= $('#guc-casos-action-pdf-upload');
-    const $pdfDeleteBtn= $('#guc-casos-action-pdf-delete');
+    let $startModal = $('#gcas-casos-app-modal-start');
+    let $startForm  = $('#gcas-casos-form-inicio');
+    const $startSave   = $('#gcas-casos-save-start');
+    const $startCancel = $('#gcas-casos-cancel-start');
+    const $pdfField    = $('#gcas-casos-action-pdf');
+    const $pdfName     = $('#gcas-casos-action-pdf-name');
+    const $pdfLink     = $('#gcas-casos-action-pdf-open');
+    const $pdfUploadBtn= $('#gcas-casos-action-pdf-upload');
+    const $pdfDeleteBtn= $('#gcas-casos-action-pdf-delete');
 
     if ($startModal.length && $startModal.parent()[0] !== document.body) {
       $startModal = $startModal.detach().appendTo('body');
@@ -243,7 +243,7 @@
 
     function showPdfField(show){
       if(!$pdfField.length) return;
-      $pdfField.toggleClass('guc-hidden', !show);
+      $pdfField.toggleClass('gcas-hidden', !show);
       $pdfField.attr('aria-hidden', show ? 'false' : 'true');
       if (!show) {
         setPdfInfo('');
@@ -254,7 +254,7 @@
     function setStartModalMode(mode){
       const key = (mode === 'edit') ? 'edit' : 'default';
       $startModal.attr('data-mode', key);
-      $startModal.find('.guc-modal-header h3').text(START_TITLES[key]);
+      $startModal.find('.gcas-modal-header h3').text(START_TITLES[key]);
       showPdfField(mode === 'edit');
     }
 
@@ -332,7 +332,7 @@
 
     function reallyCloseStart(){
       $startModal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-casos-app-no-scroll');
+      $('body').removeClass('gcas-casos-app-no-scroll');
       resetStartModal();
     }
 
@@ -352,27 +352,27 @@
       setStartModalMode(mode);
       startDirty = false;
       $startModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-casos-app-no-scroll');
+      $('body').addClass('gcas-casos-app-no-scroll');
     }
 
-    $startModal.find('.guc-modal-close').off('click').on('click', closeStart);
+    $startModal.find('.gcas-modal-close').off('click').on('click', closeStart);
     $startCancel.on('click', closeStart);
     $startModal.on('mousedown', function(e){
-      const $dialog = $startModal.find('.guc-modal-dialog');
+      const $dialog = $startModal.find('.gcas-modal-dialog');
       if ($dialog.is(e.target) || $dialog.has(e.target).length) return;
       closeStart();
     });
 
     // Modal estado del caso
-    let $statusModal = $('#guc-casos-app-modal-status');
-    let $statusForm  = $('#guc-casos-form-status');
-    const $statusSave   = $('#guc-casos-save-status');
-    const $statusCancel = $('#guc-casos-cancel-status');
+    let $statusModal = $('#gcas-casos-app-modal-status');
+    let $statusForm  = $('#gcas-casos-form-status');
+    const $statusSave   = $('#gcas-casos-save-status');
+    const $statusCancel = $('#gcas-casos-cancel-status');
     let statusDirty = false;
 
     if ($statusModal.length && $statusModal.parent()[0] !== document.body) {
       $statusModal = $statusModal.detach().appendTo('body');
-      $statusForm = $('#guc-casos-form-status');
+      $statusForm = $('#gcas-casos-form-status');
     }
     if ($statusModal.length) {
       $statusModal.removeClass('show').attr('aria-hidden','true').hide();
@@ -397,7 +397,7 @@
       }
       $statusModal.removeClass('show').attr('aria-hidden','true').hide();
       if (!$modal.hasClass('show') && !$startModal.hasClass('show')) {
-        $('body').removeClass('guc-casos-app-no-scroll');
+        $('body').removeClass('gcas-casos-app-no-scroll');
       }
       resetStatusModal();
     }
@@ -406,14 +406,14 @@
       if (!$statusModal.length) return;
       statusDirty = false;
       $statusModal.addClass('show').attr('aria-hidden','false').show();
-      $('body').addClass('guc-casos-app-no-scroll');
+      $('body').addClass('gcas-casos-app-no-scroll');
     }
 
     if ($statusModal.length){
-      $statusModal.find('.guc-modal-close').off('click').on('click', closeStatus);
+      $statusModal.find('.gcas-modal-close').off('click').on('click', closeStatus);
       $statusCancel.on('click', closeStatus);
       $statusModal.on('mousedown', function(e){
-        const $dialog = $statusModal.find('.guc-modal-dialog');
+        const $dialog = $statusModal.find('.gcas-modal-dialog');
         if ($dialog.is(e.target) || $dialog.has(e.target).length) return;
         closeStatus();
       });
@@ -431,35 +431,35 @@
       $form.find('[name=id]').val('');
       $form.find('[name=entidad],[name=expediente]').val('');
       $form.find('[name=case_type]').prop('disabled', false);
-      $form.find('input, textarea, select').prop('disabled', false).removeClass('guc-readonly');
+      $form.find('input, textarea, select').prop('disabled', false).removeClass('gcas-readonly');
       $user.prop('disabled', false);
       setDirty(false);
     }
 
-    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('guc-casos-app-no-scroll'); }
+    function openModal(){ $modal.addClass('show').attr('aria-hidden','false').show(); $('body').addClass('gcas-casos-app-no-scroll'); }
     function closeModal(){
       if (dirty && mode !== 'view') {
         if (!confirm('Tienes cambios sin guardar. ¿Cerrar de todos modos?')) return;
       }
       $modal.removeClass('show').attr('aria-hidden','true').hide();
-      $('body').removeClass('guc-casos-app-no-scroll');
+      $('body').removeClass('gcas-casos-app-no-scroll');
     }
 
     function setMode(m){
       mode = m;
       const readonly = (m === 'view');
-      $('#guc-casos-modal-title').text(
+      $('#gcas-casos-modal-title').text(
         m === 'create' ? 'Crear nuevo caso' :
         m === 'edit'   ? 'Editar caso'      : 'Ver caso'
       );
       if (readonly) {
-        $form.find('input, textarea, select').prop('disabled', true).addClass('guc-readonly');
+        $form.find('input, textarea, select').prop('disabled', true).addClass('gcas-readonly');
       } else {
-        $form.find('input, textarea, select').prop('disabled', false).removeClass('guc-readonly');
+        $form.find('input, textarea, select').prop('disabled', false).removeClass('gcas-readonly');
         const disableFixed = (m !== 'create');
         $user.prop('disabled', disableFixed);
         $form.find('[name=case_type]').prop('disabled', disableFixed);
-        $form.find('[name=entidad],[name=expediente]').prop('disabled', true).addClass('guc-readonly');
+        $form.find('[name=entidad],[name=expediente]').prop('disabled', true).addClass('gcas-readonly');
       }
       $save.toggle(m !== 'view').text(m === 'edit' ? 'Actualizar' : 'Guardar');
     }
@@ -481,15 +481,26 @@
     /* =========================
      *  Helpers: state & UX
      * ========================= */
-    const STORAGE_KEY = 'gucCasosState';
+    const STORAGE_KEY = 'gcasCasosState';
+    const LEGACY_STORAGE_KEY = 'gucCasosState';
 
     function readStoredState(){
-      try {
-        const raw = window.localStorage.getItem(STORAGE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') return parsed;
-      } catch(e){}
+      const keys = [STORAGE_KEY, LEGACY_STORAGE_KEY];
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (!key) continue;
+        try {
+          const raw = window.localStorage.getItem(key);
+          if (!raw) continue;
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            if (key === LEGACY_STORAGE_KEY && STORAGE_KEY !== LEGACY_STORAGE_KEY) {
+              try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch(e){}
+            }
+            return parsed;
+          }
+        } catch(e){}
+      }
       return null;
     }
 
@@ -502,6 +513,9 @@
           secretariaBucket: state.secretariaBucket && typeof state.secretariaBucket === 'object' ? state.secretariaBucket : {}
         };
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        if (LEGACY_STORAGE_KEY && LEGACY_STORAGE_KEY !== STORAGE_KEY) {
+          try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch(e){}
+        }
       } catch(e){}
     }
 
@@ -511,15 +525,15 @@
 
     function captureState(){
       const state = { openCases: [], panels:{}, secretariaBucket:{}, search: currentSearch || '', filter: currentFilter || '' };
-      $root.find('tr.guc-subrow').each(function(){
+      $root.find('tr.gcas-subrow').each(function(){
         const caseId = String($(this).attr('data-parent') || '');
         if(!caseId) return;
         if (!state.openCases.includes(caseId)) state.openCases.push(caseId);
         state.panels[caseId] = [];
-        $(this).find('.guc-sec .guc-toggle').each(function(idx){
+        $(this).find('.gcas-sec .gcas-toggle').each(function(idx){
           state.panels[caseId][idx] = ($(this).attr('aria-expanded') === 'true');
         });
-        const $secWrap = $(this).find('.guc-subtable-wrap[data-section="secretaria"]');
+        const $secWrap = $(this).find('.gcas-subtable-wrap[data-section="secretaria"]');
         const b = $secWrap.attr('data-bucket');
         if (b) state.secretariaBucket[caseId] = b;
       });
@@ -528,19 +542,19 @@
 
     function applyPanelState($sub, arr){
       const cfg = arr || [];
-      $sub.find('.guc-sec .guc-toggle').each(function(idx){
+      $sub.find('.gcas-sec .gcas-toggle').each(function(idx){
         const wantOpen = (cfg[idx] !== false);
         const $btn = $(this);
-        const $panel = $btn.next('.guc-panel');
+        const $panel = $btn.next('.gcas-panel');
         $btn.attr('aria-expanded', wantOpen ? 'true' : 'false');
-        $btn.find('.guc-caret').text(wantOpen ? '▴' : '▾');
+        $btn.find('.gcas-caret').text(wantOpen ? '▴' : '▾');
         if (wantOpen) $panel.show(); else $panel.hide();
       });
     }
 
     function setCaseHasActions(caseId, has){
       const cid = String(caseId);
-      const $btn = $root.find('.guc-start[data-id="'+cid+'"]').first();
+      const $btn = $root.find('.gcas-start[data-id="'+cid+'"]').first();
       if ($btn.length) {
         $btn.text(has ? 'Agregar acción' : 'Iniciar caso');
         $btn.closest('tr').attr('data-has-actions', has ? '1' : '0');
@@ -558,7 +572,7 @@
     function resolveSectionKey($btn){
       let section = $btn.data('section');
       if(!section){
-        const $wrap = $btn.closest('.guc-subtable-wrap');
+        const $wrap = $btn.closest('.gcas-subtable-wrap');
         const secKey = $wrap.data('section');
         if (secKey === 'secretaria') section = $wrap.attr('data-bucket') || 'sec_general';
         else section = (secKey === 'pre') ? 'pre' : 'arb';
@@ -569,15 +583,15 @@
     function refreshSectionFor(caseId, sectionKey){
       if(!caseId) return;
       const cid = String(caseId);
-      const $sub = $root.find('tr.guc-subrow[data-parent="'+cid+'"]').first();
+      const $sub = $root.find('tr.gcas-subrow[data-parent="'+cid+'"]').first();
       if(!$sub.length) return;
       let $wrap;
       if (sectionKey === 'pre') {
-        $wrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
+        $wrap = $sub.find('.gcas-subtable-wrap[data-section="pre"]');
       } else if (sectionKey === 'arb') {
-        $wrap = $sub.find('.guc-subtable-wrap[data-section="arb"]');
+        $wrap = $sub.find('.gcas-subtable-wrap[data-section="arb"]');
       } else {
-        $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
+        $wrap = $sub.find('.gcas-subtable-wrap[data-section="secretaria"]');
         if ($wrap.length) {
           $wrap.attr('data-bucket', sectionKey);
           $sub.find('[data-secretaria-title]').text(sectionKey === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
@@ -596,14 +610,14 @@
 
       const secBucket = state && state.secretariaBucket ? state.secretariaBucket[cid] : undefined;
       if (secBucket) {
-        const $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
+        const $wrap = $sub.find('.gcas-subtable-wrap[data-section="secretaria"]');
         $wrap.attr('data-bucket', secBucket);
         $sub.find('[data-secretaria-title]').text(secBucket === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
       }
 
-      const $preWrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
-      const $secWrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
-      const $arbWrap = $sub.find('.guc-subtable-wrap[data-section="arb"]');
+      const $preWrap = $sub.find('.gcas-subtable-wrap[data-section="pre"]');
+      const $secWrap = $sub.find('.gcas-subtable-wrap[data-section="secretaria"]');
+      const $arbWrap = $sub.find('.gcas-subtable-wrap[data-section="arb"]');
 
       renderSection($preWrap);
       renderSection($secWrap);
@@ -661,10 +675,10 @@
           $tbody.html(res.data.html);
           restoreState(runtimeState.openCases && runtimeState.openCases.length ? runtimeState : null);
         } else {
-          $tbody.html('<tr><td colspan="6" class="guc-empty">Error al cargar.</td></tr>');
+          $tbody.html('<tr><td colspan="6" class="gcas-empty">Error al cargar.</td></tr>');
         }
       }, 'json').fail(function(){
-        $tbody.html('<tr><td colspan="6" class="guc-empty">Error de conexión.</td></tr>');
+        $tbody.html('<tr><td colspan="6" class="gcas-empty">Error de conexión.</td></tr>');
       });
     }
 
@@ -705,7 +719,7 @@
     });
     $close.on('click', closeModal);
 
-    $(document).on('keydown.gucCasos', function(e){
+    $(document).on('keydown.gcasCasos', function(e){
       if (e.key === 'Escape') {
         if ($statusModal.length && $statusModal.hasClass('show')) { closeStatus(); }
         if ($startModal.hasClass('show')) { closeStart(); }
@@ -713,7 +727,7 @@
       }
     });
     $modal.on('mousedown', function(e){
-      const $dialog = $modal.find('.guc-modal-dialog').first();
+      const $dialog = $modal.find('.gcas-modal-dialog').first();
       if ($dialog.is(e.target) || $dialog.has(e.target).length) return;
       closeModal();
     });
@@ -747,7 +761,7 @@
     });
 
     // estado del caso
-    $tbody.on('click', '.guc-status', function(){
+    $tbody.on('click', '.gcas-status', function(){
       if (!$statusModal.length) return;
       const id = $(this).data('id');
       if (!id) return;
@@ -794,10 +808,10 @@
     }
 
     // ver/editar/eliminar
-    $tbody.on('click', '.guc-view, .guc-edit, .guc-del', function(){
+    $tbody.on('click', '.gcas-view, .gcas-edit, .gcas-del', function(){
       const id = $(this).data('id');
 
-      if ($(this).hasClass('guc-del')) {
+      if ($(this).hasClass('gcas-del')) {
         if (!confirm('¿Eliminar este caso?')) return;
         $.post(GUC_CASOS.ajax, { action:'guc_delete_case', nonce:GUC_CASOS.nonce, id }, function(res){
           if (res && res.success) loadTable();
@@ -813,7 +827,7 @@
         if (!(res && res.success)) { alert('No se pudo cargar el caso'); return; }
         const d = res.data || {};
         resetForm(); await loadUsers(d.user_id, d.user_id); fillForm(d);
-        if ($(this).hasClass('guc-view')) setMode('view'); else setMode('edit');
+        if ($(this).hasClass('gcas-view')) setMode('view'); else setMode('edit');
         openModal(); setDirty(false);
       }.bind(this), 'json').fail(function(){ alert('Error de conexión al cargar'); });
     });
@@ -824,7 +838,7 @@
     let $lastStartRow = null;
 
     // abrir “Inicio de caso” desde la columna HISTORIAL
-    $tbody.on('click', '.guc-start', function(){
+    $tbody.on('click', '.gcas-start', function(){
       $lastStartRow = $(this).closest('tr');
       const id = $(this).data('id');
       resetStartModal();
@@ -843,34 +857,34 @@
     // crea la subfila (si no existe) y devuelve el jQuery del <tr> subrow
     function ensureSubrow($row, caseId){
       if (!$row || !$row.length) return null;
-      if ($row.next().hasClass('guc-subrow')) return $row.next();
+      if ($row.next().hasClass('gcas-subrow')) return $row.next();
       const colSpan = $row.children('td,th').length || 6;
       const html = `
-        <tr class="guc-subrow" data-parent="${String(caseId)}">
-          <td class="guc-subrow-cell" colspan="${colSpan}">
-            <div class="guc-accordion">
-              <div class="guc-sec">
-                <button type="button" class="guc-toggle" aria-expanded="true">
-                  <span class="guc-caret">▴</span> PRE ARBITRALES
+        <tr class="gcas-subrow" data-parent="${String(caseId)}">
+          <td class="gcas-subrow-cell" colspan="${colSpan}">
+            <div class="gcas-accordion">
+              <div class="gcas-sec">
+                <button type="button" class="gcas-toggle" aria-expanded="true">
+                  <span class="gcas-caret">▴</span> PRE ARBITRALES
                 </button>
-                <div class="guc-panel" style="display:block">
-                  <div class="guc-section" data-section="pre">
-                    <div class="guc-subtable-wrap" data-case-id="${String(caseId)}" data-section="pre"></div>
+                <div class="gcas-panel" style="display:block">
+                  <div class="gcas-section" data-section="pre">
+                    <div class="gcas-subtable-wrap" data-case-id="${String(caseId)}" data-section="pre"></div>
                   </div>
                 </div>
               </div>
-              <div class="guc-sec">
-                <button type="button" class="guc-toggle" aria-expanded="true">
-                  <span class="guc-caret">▴</span> ARBITRALES
+              <div class="gcas-sec">
+                <button type="button" class="gcas-toggle" aria-expanded="true">
+                  <span class="gcas-caret">▴</span> ARBITRALES
                 </button>
-                <div class="guc-panel" style="display:block">
-                  <div class="guc-section" data-section="secretaria">
-                    <h4 class="guc-subtitle" data-secretaria-title>Secretaría</h4>
-                    <div class="guc-subtable-wrap" data-case-id="${String(caseId)}" data-section="secretaria"></div>
+                <div class="gcas-panel" style="display:block">
+                  <div class="gcas-section" data-section="secretaria">
+                    <h4 class="gcas-subtitle" data-secretaria-title>Secretaría</h4>
+                    <div class="gcas-subtable-wrap" data-case-id="${String(caseId)}" data-section="secretaria"></div>
                   </div>
-                  <div class="guc-section" data-section="arb">
-                    <h4 class="guc-subtitle">Arbitral</h4>
-                    <div class="guc-subtable-wrap" data-case-id="${String(caseId)}" data-section="arb"></div>
+                  <div class="gcas-section" data-section="arb">
+                    <h4 class="gcas-subtitle">Arbitral</h4>
+                    <div class="gcas-subtable-wrap" data-case-id="${String(caseId)}" data-section="arb"></div>
                   </div>
                 </div>
               </div>
@@ -885,7 +899,7 @@
       return $.post(GUC_CASOS.ajax, { action:'guc_secretaria_title', nonce:GUC_CASOS.nonce, case_id: caseId }, function(res){
         if (res && res.success) {
           $container.find('[data-secretaria-title]').text(res.data.title);
-          $container.find('.guc-subtable-wrap[data-section="secretaria"]').attr('data-bucket', res.data.bucket);
+          $container.find('.gcas-subtable-wrap[data-section="secretaria"]').attr('data-bucket', res.data.bucket);
         }
       }, 'json');
     }
@@ -902,44 +916,44 @@
           $.post(GUC_CASOS.ajax, { action:'guc_list_section', nonce:GUC_CASOS.nonce, case_id:caseId, section: bucketKey }, function(res){
             if (res && res.success) {
               $wrap.html(res.data.html);
-              updateCaseHasActions($wrap.closest('tr.guc-subrow'));
+              updateCaseHasActions($wrap.closest('tr.gcas-subrow'));
               rememberState(captureState());
             }
-            else $wrap.html('<div class="guc-empty">No se pudo cargar Secretaría.</div>');
-          }, 'json').fail(function(){ $wrap.html('<div class="guc-empty">Error de conexión.</div>'); });
+            else $wrap.html('<div class="gcas-empty">No se pudo cargar Secretaría.</div>');
+          }, 'json').fail(function(){ $wrap.html('<div class="gcas-empty">Error de conexión.</div>'); });
         };
         if (bucket) doList(bucket);
         else {
           $.post(GUC_CASOS.ajax, { action:'guc_secretaria_title', nonce:GUC_CASOS.nonce, case_id: caseId }, function(res){
             if (res && res.success) {
               $wrap.attr('data-bucket', res.data.bucket);
-              $wrap.closest('.guc-section[data-section="secretaria"]').find('[data-secretaria-title]').text(res.data.title);
+              $wrap.closest('.gcas-section[data-section="secretaria"]').find('[data-secretaria-title]').text(res.data.title);
               doList(res.data.bucket);
             } else {
-              $wrap.html('<div class="guc-empty">No se pudo determinar Secretaría.</div>');
+              $wrap.html('<div class="gcas-empty">No se pudo determinar Secretaría.</div>');
             }
-          }, 'json').fail(function(){ $wrap.html('<div class="guc-empty">Error de conexión.</div>'); });
+          }, 'json').fail(function(){ $wrap.html('<div class="gcas-empty">Error de conexión.</div>'); });
         }
       } else {
         const key = section === 'pre' ? 'pre' : 'arb';
         $.post(GUC_CASOS.ajax, { action:'guc_list_section', nonce:GUC_CASOS.nonce, case_id:caseId, section:key }, function(res){
           if (res && res.success) {
             $wrap.html(res.data.html);
-            updateCaseHasActions($wrap.closest('tr.guc-subrow'));
+            updateCaseHasActions($wrap.closest('tr.gcas-subrow'));
             rememberState(captureState());
           }
-          else $wrap.html('<div class="guc-empty">No se pudo cargar.</div>');
-        }, 'json').fail(function(){ $wrap.html('<div class="guc-empty">Error de conexión.</div>'); });
+          else $wrap.html('<div class="gcas-empty">No se pudo cargar.</div>');
+        }, 'json').fail(function(){ $wrap.html('<div class="gcas-empty">Error de conexión.</div>'); });
       }
     }
 
     // acordeón
-    $root.on('click', '.guc-toggle', function () {
+    $root.on('click', '.gcas-toggle', function () {
       const $btn = $(this);
-      const $panel = $btn.next('.guc-panel');
+      const $panel = $btn.next('.gcas-panel');
       const expanded = $btn.attr('aria-expanded') === 'true';
       $btn.attr('aria-expanded', !expanded);
-      $btn.find('.guc-caret').text(expanded ? '▾' : '▴');
+      $btn.find('.gcas-caret').text(expanded ? '▾' : '▴');
       if (expanded) { $panel.slideUp(160); } else { $panel.slideDown(160); }
       rememberState(captureState());
     });
@@ -947,7 +961,7 @@
     /* ==========================================================
      *  Botón "Agregar acción" (marca el destino)
      * ========================================================== */
-    $root.on('click', '.guc-add-action', function(){
+    $root.on('click', '.gcas-add-action', function(){
       const sectionKey = $(this).data('section'); // pre | sec_arbitral | sec_general | arb
       const caseId = $(this).data('case-id');
 
@@ -968,7 +982,7 @@
     /* ==========================================================
      *  Editar fila de acción (reutiliza el mismo modal)
      * ========================================================== */
-    $root.on('click', '.guc-row-edit', function(){
+    $root.on('click', '.gcas-row-edit', function(){
       const $btn = $(this);
       const $row = $btn.closest('tr');
       const rowId = $row.data('row-id');
@@ -1005,12 +1019,12 @@
       }, 'json').fail(function(){ alert('Error de conexión'); });
     });
 
-    $root.on('click', '.guc-row-del', function(){
+    $root.on('click', '.gcas-row-del', function(){
       const $btn = $(this);
       const section = resolveSectionKey($btn);
       const rowId = $btn.closest('tr').data('row-id');
       if (!rowId || !section) return;
-      const $wrap = $btn.closest('.guc-subtable-wrap');
+      const $wrap = $btn.closest('.gcas-subtable-wrap');
       if (!confirm('¿Eliminar esta acción?')) return;
       $btn.prop('disabled', true);
       $.post(GUC_CASOS.ajax, { action:'guc_delete_section_row', nonce:GUC_CASOS.nonce, section, row_id: rowId }, function(res){
@@ -1079,15 +1093,15 @@
             closeStart(true); // cerrar modal y limpiar destino
 
             // refrescar SOLO la subtabla correspondiente
-            const $sub = $root.find('tr.guc-subrow[data-parent="'+data.case_id+'"]').first();
+            const $sub = $root.find('tr.gcas-subrow[data-parent="'+data.case_id+'"]').first();
             let $wrap;
             if (finalBucket === 'pre') {
-              $wrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
+              $wrap = $sub.find('.gcas-subtable-wrap[data-section="pre"]');
             } else if (finalBucket === 'arb') {
-              $wrap = $sub.find('.guc-subtable-wrap[data-section="arb"]');
+              $wrap = $sub.find('.gcas-subtable-wrap[data-section="arb"]');
             } else {
               // secretaría
-              $wrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
+              $wrap = $sub.find('.gcas-subtable-wrap[data-section="secretaria"]');
               if ($wrap.length) {
                 $wrap.attr('data-bucket', finalBucket);
                 $sub.find('[data-secretaria-title]').text(finalBucket === 'sec_arbitral' ? 'Secretaría Arbitral' : 'Secretaría General');
@@ -1119,7 +1133,7 @@
         closeStart(true);
 
         // asegurar subfila
-        const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $root.find('.guc-start[data-id="'+ data.case_id +'"]').first().closest('tr');
+        const $row = ($lastStartRow && $lastStartRow.length) ? $lastStartRow : $root.find('.gcas-start[data-id="'+ data.case_id +'"]').first().closest('tr');
         const $sub = ensureSubrow($row, data.case_id);
 
         // 1) insertar PRIMER registro visible en PRE
@@ -1128,16 +1142,16 @@
           section:'pre', case_id: data.case_id,
           data: { situacion: data.situacion, motivo: data.motivo, fecha: data.fecha }
         }, function(){
-          const $preWrap = $sub.find('.guc-subtable-wrap[data-section="pre"]');
+          const $preWrap = $sub.find('.gcas-subtable-wrap[data-section="pre"]');
           renderSection($preWrap);
         }, 'json');
 
         // 2) setear Secretaría según último tipo y renderizar tablas
         loadSecretariaTitle(data.case_id, $sub).then(function(){
-          const $secWrap = $sub.find('.guc-subtable-wrap[data-section="secretaria"]');
+          const $secWrap = $sub.find('.gcas-subtable-wrap[data-section="secretaria"]');
           renderSection($secWrap);
         });
-        const $arbWrap = $sub.find('.guc-subtable-wrap[data-section="arb"]');
+        const $arbWrap = $sub.find('.gcas-subtable-wrap[data-section="arb"]');
         renderSection($arbWrap);
 
       }, 'json').fail(function(){
@@ -1175,7 +1189,7 @@
     /* ==========================================================
      *  Subida de PDF (delegado por fila)
      * ========================================================== */
-    $root.on('click', '.guc-upload', function(){
+    $root.on('click', '.gcas-upload', function(){
       const $btn = $(this);
       const section = resolveSectionKey($btn); // pre | sec_arbitral | sec_general | arb
       const $row = $btn.closest('tr');
@@ -1183,7 +1197,7 @@
       const caseId  = $row.data('case-id');
       if (!rowId || !section) return;
 
-      const $wrap = $btn.closest('.guc-subtable-wrap');
+      const $wrap = $btn.closest('.gcas-subtable-wrap');
 
       const $input = $('<input type="file" accept="application/pdf" style="display:none">');
       $('body').append($input);
