@@ -73,21 +73,6 @@ final class GUC_Casos_Compact {
     }
   }
 
-  public function maybe_upgrade_schema(){
-    global $wpdb;
-    $table = $this->t_cases;
-    if (!$table) return;
-    $columns = $wpdb->get_col("SHOW COLUMNS FROM `$table`");
-    if (!is_array($columns)) return;
-
-    if (!in_array('estado', $columns, true)) {
-      $wpdb->query("ALTER TABLE `$table` ADD `estado` varchar(50) DEFAULT '' AFTER `descripcion`");
-    }
-    if (!in_array('estado_fecha', $columns, true)) {
-      $wpdb->query("ALTER TABLE `$table` ADD `estado_fecha` datetime NULL DEFAULT NULL AFTER `estado`");
-    }
-  }
-
   function assets(){
     $base = plugin_dir_url(__FILE__);
     $path = plugin_dir_path(__FILE__);
@@ -116,6 +101,7 @@ final class GUC_Casos_Compact {
   function shortcode(){
     wp_enqueue_style('guc-casos'); wp_enqueue_script('guc-casos');
     ob_start(); ?>
+
     <div id="gcas-casos-app" class="gcas-wrap">
       <div class="gcas-header">
         <h2 class="gcas-title">Gestión de Casos</h2>
@@ -147,20 +133,29 @@ final class GUC_Casos_Compact {
               </button>
             </div>
           </div>
-          <button id="gcas-casos-open-modal" class="gcas-btn gcas-btn-primary"><span class="gcas-icon">＋</span>Nuevo caso</button>
+          <button id="gcas-casos-open-modal" class="gcas-btn gcas-btn-primary">
+            <span class="gcas-icon">＋</span>
+            Nuevo caso
+          </button>
         </div>
       </div>
       <div class="gcas-card">
         <table class="gcas-table">
-          <thead><tr>
-            <th>EXPEDIENTE</th>
-            <th>ENTIDAD</th>
-            <th>NOMENCLATURA</th>
-            <th>USUARIO ASIGNADO</th>
-            <th>HISTORIAL</th>
-            <th>ACCIONES</th>
-          </tr></thead>
-          <tbody id="gcas-casos-table"><tr><td colspan="6" class="gcas-empty">Cargando…</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>EXPEDIENTE</th>
+              <th>ENTIDAD</th>
+              <th>NOMENCLATURA</th>
+              <th>USUARIO ASIGNADO</th>
+              <th>HISTORIAL</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody id="gcas-casos-table">
+            <tr>
+              <td colspan="6" class="gcas-empty">Cargando…</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -225,7 +220,7 @@ final class GUC_Casos_Compact {
         </div>
         <div class="gcas-modal-footer">
           <button type="button" id="gcas-casos-cancel" class="gcas-btn">Cancelar</button>
-          <button type="button" id="gcas-casos-save"   class="gcas-btn gcas-btn-primary">Guardar</button>
+          <button type="button" id="gcas-casos-save" class="gcas-btn gcas-btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -272,7 +267,6 @@ final class GUC_Casos_Compact {
         <div class="gcas-modal-footer">
           <button type="button" id="gcas-casos-cancel-start" class="gcas-btn">Cancelar</button>
           <button type="button" id="gcas-casos-save-start" class="gcas-btn gcas-btn-primary">Guardar</button>
-        </div>
         </div>
       </div>
     </div>
