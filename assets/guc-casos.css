@@ -126,7 +126,6 @@
 #gcas-casos-app-modal .gcas-readonly,
 #gcas-casos-app-modal-start .gcas-readonly,
 #gcas-casos-app-modal-status .gcas-readonly{background:#fbf8f3;color:#6b5e50;}
-body.gcas-casos-app-no-scroll{overflow:hidden;}
 
 /* ===== subfilas y subtables ===== */
 #gcas-casos-app .gcas-subrow .gcas-subrow-cell{ padding:.75rem 1rem; background:#fff; border-top:1px solid #e5e2dd; }
@@ -215,15 +214,16 @@ body.gcas-casos-app-no-scroll{overflow:hidden;}
 #gcas-casos-app-modal-start .gcas-ico.gcas-ico-gear::before,
 #gcas-casos-app-modal-status .gcas-ico.gcas-ico-gear::before{mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='currentColor' d='M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.02 7.02 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 14.39 2h-3.78a.5.5 0 0 0-.5.42l-.36 2.54c-.6.23-1.15.54-1.66.9l-2.39-.96a.5.5 0 0 0-.6.22L2.18 8.44a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.48.37 1.03.67 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.78a.5.5 0 0 0 .5-.42l.36-2.54c.6-.23 1.15-.54 1.66-.9l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z'/></svg>")}
 
-#gcas-action-pdf{margin-top:6px}
-#gcas-action-pdf .gcas-pdf-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid #eadfce;border-radius:14px;background:#fbf6ef}
-#gcas-action-pdf .gcas-pdf-meta{display:flex;flex-direction:column;gap:6px;min-width:0}
-#gcas-action-pdf .gcas-pdf-name{font-weight:600;color:#3f3a34;word-break:break-all}
-#gcas-action-pdf[data-has-pdf="0"] .gcas-pdf-name{color:#a09484;font-weight:500}
-#gcas-action-pdf .gcas-pdf-link{font-size:13px;font-weight:600;color:#8a6d45;text-decoration:none}
-#gcas-action-pdf .gcas-pdf-link:hover{text-decoration:underline}
-#gcas-action-pdf .gcas-pdf-buttons{display:flex;gap:8px}
-#gcas-action-pdf .gcas-ico{margin-right:0}
+body.is-gcas-casos-open{overflow:hidden;}
+#gcas-casos-action-pdf{margin-top:6px}
+#gcas-casos-action-pdf .gcas-pdf-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid #eadfce;border-radius:14px;background:#fbf6ef}
+#gcas-casos-action-pdf .gcas-pdf-meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+#gcas-casos-action-pdf .gcas-pdf-name{font-weight:600;color:#3f3a34;word-break:break-all}
+#gcas-casos-action-pdf[data-has-pdf="0"] .gcas-pdf-name{color:#a09484;font-weight:500}
+#gcas-casos-action-pdf .gcas-pdf-link{font-size:13px;font-weight:600;color:#8a6d45;text-decoration:none}
+#gcas-casos-action-pdf .gcas-pdf-link:hover{text-decoration:underline}
+#gcas-casos-action-pdf .gcas-pdf-buttons{display:flex;gap:8px}
+#gcas-casos-action-pdf .gcas-ico{margin-right:0}
 
 #gcas-casos-app-modal-status .gcas-modal-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){#gcas-casos-app-modal-status .gcas-modal-status-grid{grid-template-columns:1fr}}

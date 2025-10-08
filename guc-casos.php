@@ -35,14 +35,41 @@ final class GUC_Casos_Compact {
     add_shortcode('gestion_casos', [$this,'shortcode']);
 
     $ax = [
-      'guc_list_cases','guc_list_users','guc_create_case','guc_get_case','guc_update_case','guc_delete_case',
-      'guc_update_case_status',
-      'guc_create_case_event','guc_secretaria_title','guc_list_section','guc_create_section_action',
-      'guc_get_section_row','guc_update_section_row','guc_delete_section_row','guc_upload_pdf','guc_clear_pdf'
+      'guc_cs_list_cases'            => 'guc_list_cases',
+      'guc_cs_list_users'            => 'guc_list_users',
+      'guc_cs_create_case'           => 'guc_create_case',
+      'guc_cs_get_case'              => 'guc_get_case',
+      'guc_cs_update_case'           => 'guc_update_case',
+      'guc_cs_delete_case'           => 'guc_delete_case',
+      'guc_cs_update_case_status'    => 'guc_update_case_status',
+      'guc_cs_create_case_event'     => 'guc_create_case_event',
+      'guc_cs_secretaria_title'      => 'guc_secretaria_title',
+      'guc_cs_list_section'          => 'guc_list_section',
+      'guc_cs_create_section_action' => 'guc_create_section_action',
+      'guc_cs_get_section_row'       => 'guc_get_section_row',
+      'guc_cs_update_section_row'    => 'guc_update_section_row',
+      'guc_cs_delete_section_row'    => 'guc_delete_section_row',
+      'guc_cs_upload_pdf'            => 'guc_upload_pdf',
+      'guc_cs_clear_pdf'             => 'guc_clear_pdf',
     ];
-    foreach($ax as $a){
-      add_action("wp_ajax_$a", [$this,$a]);
-      add_action("wp_ajax_nopriv_$a", [$this,$a]);
+    foreach($ax as $hook => $method){
+      add_action("wp_ajax_$hook", [$this,$method]);
+      add_action("wp_ajax_nopriv_$hook", [$this,$method]);
+    }
+  }
+
+  public function maybe_upgrade_schema(){
+    global $wpdb;
+    $table = $this->t_cases;
+    if (!$table) return;
+    $columns = $wpdb->get_col("SHOW COLUMNS FROM `$table`");
+    if (!is_array($columns)) return;
+
+    if (!in_array('estado', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado` varchar(50) DEFAULT '' AFTER `descripcion`");
+    }
+    if (!in_array('estado_fecha', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado_fecha` datetime NULL DEFAULT NULL AFTER `estado`");
     }
   }
 
