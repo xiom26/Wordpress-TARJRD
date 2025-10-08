@@ -73,6 +73,21 @@ final class GUC_Casos_Compact {
     }
   }
 
+  public function maybe_upgrade_schema(){
+    global $wpdb;
+    $table = $this->t_cases;
+    if (!$table) return;
+    $columns = $wpdb->get_col("SHOW COLUMNS FROM `$table`");
+    if (!is_array($columns)) return;
+
+    if (!in_array('estado', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado` varchar(50) DEFAULT '' AFTER `descripcion`");
+    }
+    if (!in_array('estado_fecha', $columns, true)) {
+      $wpdb->query("ALTER TABLE `$table` ADD `estado_fecha` datetime NULL DEFAULT NULL AFTER `estado`");
+    }
+  }
+
   function assets(){
     $base = plugin_dir_url(__FILE__);
     $path = plugin_dir_path(__FILE__);
