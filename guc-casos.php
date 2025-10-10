@@ -304,6 +304,7 @@ final class GUC_Casos_Compact {
         </div>
       </div>
     </div>
+
     <?php
     return ob_get_clean();
   }
