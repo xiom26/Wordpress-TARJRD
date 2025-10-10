@@ -745,7 +745,11 @@
     // crear/actualizar caso
     $save.on('click', function(){
       const data = Object.fromEntries(new FormData($form[0]).entries());
-      if (mode !== 'view' && !data.user_id) { alert('Selecciona un usuario para asignar el caso.'); return; }
+      const lockedUserId = $user.length ? String($user.val() || '') : '';
+      if (!data.user_id && lockedUserId) {
+        data.user_id = lockedUserId;
+      }
+      if (mode === 'create' && !data.user_id) { alert('Selecciona un usuario para asignar el caso.'); return; }
       const action = data.id ? 'guc_cs_update_case' : 'guc_cs_create_case';
       $save.prop('disabled', true);
       $.post(GUC_CASOS.ajax, { action, nonce:GUC_CASOS.nonce, data }, function(res){
